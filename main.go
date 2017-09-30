@@ -2,8 +2,15 @@
 
 package main
 
-import "fmt"
+import (
+  "github.com/nazariglez/tarentola-backend/database"
+)
 
 func main() {
-  fmt.Println("Hello world!!")
+  err := database.Open(false, false)
+  if err != nil {
+    panic(err)
+  }
+
+  defer database.Close()
 }
