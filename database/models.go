@@ -5,24 +5,22 @@ package database
 import "github.com/jinzhu/gorm"
 
 var modelList = []interface{}{
-  &UserModel{},
-  &RoleModel{},
+	&UserModel{},
+	&RoleModel{},
 }
 
 type UserModel struct {
-  gorm.Model
+	gorm.Model
 
-  Name string `gorm:"index"`
-  Email string `gorm:"unique, index"`
-  Password  string
-  Role RoleModel
+	Name     string `gorm:"index, required"`
+	Email    string `gorm:"unique, index, required"`
+	Password string `gorm:"required"`
+	Role     RoleModel
 }
-
 
 type RoleModel struct {
-  gorm.Model
+	gorm.Model
 
-  Name string `gorm:"index"`
-  Value int
+	Name  string `gorm:"index"`
+	Value int
 }
-

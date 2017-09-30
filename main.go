@@ -3,14 +3,22 @@
 package main
 
 import (
-  "github.com/nazariglez/tarentola-backend/database"
+	"fmt"
+	"net/http"
+
+	"github.com/nazariglez/tarentola-backend/api"
+	"github.com/nazariglez/tarentola-backend/database"
 )
 
 func main() {
-  err := database.Open(false, false)
-  if err != nil {
-    panic(err)
-  }
+	err := database.Open(false, false)
+	if err != nil {
+		panic(err)
+	}
 
-  defer database.Close()
+	defer database.Close()
+
+	http.Handle("/", api.GetRouter())
+	fmt.Println("Listening on 127.0.0.1:8000...")
+	fmt.Errorf("%+v", http.ListenAndServe(":8000", nil))
 }
