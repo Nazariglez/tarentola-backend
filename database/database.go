@@ -4,19 +4,29 @@ package database
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/nazariglez/tarentola-backend/config"
 )
 
 var db *gorm.DB
 
 func Open(prod, debug bool) error {
-	_db, err := gorm.Open("postgres", "host=localhost user=postgres dbname=tarentola sslmode=disable password=postgres")
+	opts := fmt.Sprintf(
+		"host=%s user=%s dbname=%s sslmode=%s password=%s",
+		config.Data.Database.Host,
+		config.Data.Database.User,
+		config.Data.Database.Name,
+		config.Data.Database.SSLMode,
+		config.Data.Database.Password,
+	)
+	_db, err := gorm.Open("postgres", opts)
 	if err != nil {
 		return err
 	}
 
-	_db.LogMode(debug)
+	_db.LogMode(config.Data.Database.Debug)
 	_db.AutoMigrate(modelList...)
 
 	//todo prod credentials
