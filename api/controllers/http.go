@@ -1,6 +1,6 @@
 // Created by nazarigonzalez on 30/9/17.
 
-package api
+package controllers
 
 import (
 	"encoding/json"
@@ -57,6 +57,46 @@ func sendBadRequest(w http.ResponseWriter, args ...string) {
 	w.WriteHeader(http.StatusBadRequest)
 
 	msg := "Bad request."
+	if len(args) != 0 {
+		msg = args[0]
+	}
+
+	err := json.NewEncoder(w).Encode(Base{
+		Success: false,
+		Message: msg,
+	})
+
+	if err != nil {
+		fmt.Errorf("%+v", err)
+		return
+	}
+}
+
+func sendNotFound(w http.ResponseWriter, args ...string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusNotFound)
+
+	msg := "Not found."
+	if len(args) != 0 {
+		msg = args[0]
+	}
+
+	err := json.NewEncoder(w).Encode(Base{
+		Success: false,
+		Message: msg,
+	})
+
+	if err != nil {
+		fmt.Errorf("%+v", err)
+		return
+	}
+}
+
+func sendForbidden(w http.ResponseWriter, args ...string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusForbidden)
+
+	msg := "Forbidden."
 	if len(args) != 0 {
 		msg = args[0]
 	}

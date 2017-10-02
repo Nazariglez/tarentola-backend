@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/nazariglez/tarentola-backend/api"
+	"github.com/nazariglez/tarentola-backend/api/router"
 	"github.com/nazariglez/tarentola-backend/database"
 )
 
@@ -18,7 +18,7 @@ func main() {
 
 	defer database.Close()
 
-	http.Handle("/", api.GetRouter())
+	http.Handle("/", router.GetRouter())
 	fmt.Println("Listening on 127.0.0.1:8000...")
 	fmt.Errorf("%+v", http.ListenAndServe(":8000", nil))
 }

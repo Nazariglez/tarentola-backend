@@ -1,6 +1,6 @@
 // Created by nazarigonzalez on 30/9/17.
 
-package api
+package router
 
 import (
 	"github.com/gorilla/pat"
