@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	err := database.Open(false, false)
+	err := database.Open()
 	if err != nil {
-		logger.Log.Fatal(err.Error())
+		logger.Log.Fatal(err)
 	}
 
 	defer database.Close()
@@ -23,5 +23,5 @@ func main() {
 	http.Handle("/", router.GetRouter())
 	port := ":" + strconv.Itoa(config.Data.Port)
 	logger.Log.Logf("Listening on 127.0.0.1%s...", port)
-	logger.Log.Errorf("%+v", http.ListenAndServe(port, nil))
+	logger.Log.Error(http.ListenAndServe(port, nil))
 }

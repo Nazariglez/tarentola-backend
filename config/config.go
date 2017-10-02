@@ -2,14 +2,31 @@
 
 package config
 
-import "github.com/BurntSushi/toml"
+import (
+	"flag"
+	"github.com/BurntSushi/toml"
+	"io/ioutil"
+	"os"
+)
 
-//todo read os.Flags
-//todo load toml
+var configFile = flag.String("config", "development.config.toml", "Config file")
 
 var Data = func() *configObject {
+	flag.Parse()
+
+	if _, err := os.Stat(*configFile); os.IsNotExist(err) {
+		if err := ioutil.WriteFile(*configFile, []byte(example), 0644); err != nil {
+			panic(err)
+		}
+	}
+
+	data, err := ioutil.ReadFile(*configFile)
+	if err != nil {
+		panic(err)
+	}
+
 	c := configObject{}
-	_, err := toml.Decode(example, &c)
+	_, err = toml.Decode(string(data), &c)
 	if err != nil {
 		panic(err)
 	}

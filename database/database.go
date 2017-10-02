@@ -12,7 +12,7 @@ import (
 
 var db *gorm.DB
 
-func Open(prod, debug bool) error {
+func Open() error {
 	opts := fmt.Sprintf(
 		"host=%s user=%s dbname=%s sslmode=%s password=%s",
 		config.Data.Database.Host,
