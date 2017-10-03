@@ -8,6 +8,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nazariglez/tarentola-backend/config"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -26,6 +27,16 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	expireToken := time.Now().
 		Add(time.Second * time.Duration(config.Data.Auth.TokenExpire)).
 		Unix()
+
+	user := r.Form.Get("username")
+	pass := r.Form.Get("password")
+
+	if strings.TrimSpace(user) == "" || strings.TrimSpace(pass) == "" {
+		SendBadRequest(w, "Empty username or password.")
+		return
+	}
+
+	fmt.Println(user, pass)
 
 	claims := AuthClaims{
 		Username: "myusername", //todo get data from the db

@@ -31,6 +31,17 @@ func Apply(name string, controller http.HandlerFunc) http.HandlerFunc {
 	return controller
 }
 
+func ParseForm(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := r.ParseForm(); err != nil {
+			controllers.SendServerError(w, err)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
 func isLogged(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)

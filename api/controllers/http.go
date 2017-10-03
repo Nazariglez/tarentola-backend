@@ -4,7 +4,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
 )

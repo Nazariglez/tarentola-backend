@@ -33,7 +33,7 @@ func GetRouter() *pat.Router {
 
 	router = pat.New()
 	for _, r := range routeList {
-		handler := r.handler
+		handler := middlewares.ParseForm(r.handler)
 		if r.middleware != "" {
 			handler = middlewares.Apply(r.middleware, handler)
 		}
