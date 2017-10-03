@@ -39,6 +39,7 @@ type configObject struct {
 	Port     int
 	Database database
 	Logger   logger
+	Auth     auth
 }
 
 type logger struct {
@@ -58,6 +59,11 @@ type database struct {
 	Debug    bool
 }
 
+type auth struct {
+	TokenExpire int `toml:"token_expire"`
+	Secret      string
+}
+
 var example = `
 name = "Tarentola"      #app name
 port = 8000             #http port
@@ -73,7 +79,11 @@ debug = false           #log database actions
 [logger]
 async = false
 level = 0               #[trace, debug, info, log, warn, error, fatal]
-path = "./logs"
 file = true
 file_level = 0          #same as level but for file output
+path = "./logs"
+
+[auth]
+token_expire = 3600			#seconds
+secret = "please change me in production!"	#secret key to sign the auth token
 `

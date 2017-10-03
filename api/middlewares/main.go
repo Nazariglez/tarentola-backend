@@ -6,14 +6,14 @@ import (
 	"github.com/nazariglez/tarentola-backend/api/controllers"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
+	"strings"
 )
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
 
 var list = map[string][]Middleware{
-	"isAdmin": {
+	"isLogged": {
 		isLogged,
-		isAdmin,
 	},
 }
 
@@ -33,23 +33,16 @@ func Apply(name string, controller http.HandlerFunc) http.HandlerFunc {
 
 func isLogged(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Log.Debug("Middleware: isLogged")
-		notLogged := true
-		if !notLogged {
-			controllers.Forbidden(w, r)
+		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+
+		if len(auth) != 2 || auth[0] != "Bearer" {
+			controllers.SendForbidden(w, "Invalid auth token.")
 			return
 		}
 
-		next(w, r)
-	}
-}
-
-func isAdmin(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		logger.Log.Debug("Middleware: isAdmin")
-		notAdmin := true
-		if !notAdmin {
-			controllers.Forbidden(w, r)
+		_, err := controllers.ValidateToken(auth[1])
+		if err != nil {
+			controllers.SendForbidden(w, err.Error())
 			return
 		}
 

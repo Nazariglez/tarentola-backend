@@ -5,6 +5,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
 )
 
@@ -14,7 +15,7 @@ type Base struct {
 	Data    interface{} `json:"data"`
 }
 
-func sendOk(w http.ResponseWriter, args ...interface{}) {
+func SendOk(w http.ResponseWriter, args ...interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
@@ -27,12 +28,12 @@ func sendOk(w http.ResponseWriter, args ...interface{}) {
 	}
 
 	if err := json.NewEncoder(w).Encode(base); err != nil {
-		fmt.Errorf("%+v", err)
+		logger.Log.Error(err)
 		return
 	}
 }
 
-func sendServerError(w http.ResponseWriter, args ...error) {
+func SendServerError(w http.ResponseWriter, args ...error) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(500)
 
@@ -47,12 +48,12 @@ func sendServerError(w http.ResponseWriter, args ...error) {
 	})
 
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		logger.Log.Error(err)
 		return
 	}
 }
 
-func sendBadRequest(w http.ResponseWriter, args ...string) {
+func SendBadRequest(w http.ResponseWriter, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusBadRequest)
 
@@ -67,12 +68,12 @@ func sendBadRequest(w http.ResponseWriter, args ...string) {
 	})
 
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		logger.Log.Error(err)
 		return
 	}
 }
 
-func sendNotFound(w http.ResponseWriter, args ...string) {
+func SendNotFound(w http.ResponseWriter, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
 
@@ -87,12 +88,12 @@ func sendNotFound(w http.ResponseWriter, args ...string) {
 	})
 
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		logger.Log.Error(err)
 		return
 	}
 }
 
-func sendForbidden(w http.ResponseWriter, args ...string) {
+func SendForbidden(w http.ResponseWriter, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusForbidden)
 
@@ -107,7 +108,27 @@ func sendForbidden(w http.ResponseWriter, args ...string) {
 	})
 
 	if err != nil {
-		fmt.Errorf("%+v", err)
+		logger.Log.Error(err)
+		return
+	}
+}
+
+func SendUnauthorized(w http.ResponseWriter, args ...string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusUnauthorized)
+
+	msg := "Authentication fail."
+	if len(args) != 0 {
+		msg = args[0]
+	}
+
+	err := json.NewEncoder(w).Encode(Base{
+		Success: false,
+		Message: msg,
+	})
+
+	if err != nil {
+		logger.Log.Error(err)
 		return
 	}
 }

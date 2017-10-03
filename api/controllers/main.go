@@ -2,14 +2,21 @@
 
 package controllers
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	sendNotFound(w)
+	SendNotFound(w)
 	return
 }
 
 func Forbidden(w http.ResponseWriter, r *http.Request) {
-	sendForbidden(w)
+	SendForbidden(w)
+	return
+}
+
+func Unauthorized(w http.ResponseWriter, r *http.Request) {
+	SendUnauthorized(w)
 	return
 }
