@@ -42,6 +42,7 @@ type configObject struct {
 }
 
 type logger struct {
+	Async     bool
 	Level     int
 	File      bool
 	Path      string
@@ -70,6 +71,7 @@ password = "postgres"
 debug = false           #log database actions
 
 [logger]
+async = false
 level = 0               #[trace, debug, info, log, warn, error, fatal]
 path = "./logs"
 file = true

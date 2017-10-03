@@ -9,7 +9,14 @@ import (
 )
 
 var Log = func() *_logger.Logger {
-	l := _logger.New()
+	var l *_logger.Logger
+
+	if config.Data.Logger.Async {
+		l = _logger.NewAsync()
+	} else {
+		l = _logger.New()
+	}
+
 	l.SetLevel(_logger.LogLevel(config.Data.Logger.Level))
 
 	if config.Data.Logger.File {
