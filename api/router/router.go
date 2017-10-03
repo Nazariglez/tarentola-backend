@@ -4,6 +4,7 @@ package router
 
 import (
 	"github.com/gorilla/pat"
+	"github.com/nazariglez/tarentola-backend/api/middlewares"
 	"net/http"
 )
 
@@ -19,9 +20,10 @@ const (
 var router *pat.Router
 
 type route struct {
-	method  HttpMethod
-	url     string
-	handler http.HandlerFunc
+	method     HttpMethod
+	url        string
+	handler    http.HandlerFunc
+	middleware string
 }
 
 func GetRouter() *pat.Router {
@@ -31,15 +33,20 @@ func GetRouter() *pat.Router {
 
 	router = pat.New()
 	for _, r := range routeList {
+		handler := r.handler
+		if r.middleware != "" {
+			handler = middlewares.Apply(r.middleware, handler)
+		}
+
 		switch r.method {
 		case GET:
-			router.Get(r.url, r.handler)
+			router.Get(r.url, handler)
 		case PUT:
-			router.Put(r.url, r.handler)
+			router.Put(r.url, handler)
 		case POST:
-			router.Post(r.url, r.handler)
+			router.Post(r.url, handler)
 		case DELETE:
-			router.Delete(r.url, r.handler)
+			router.Delete(r.url, handler)
 		}
 	}
 
