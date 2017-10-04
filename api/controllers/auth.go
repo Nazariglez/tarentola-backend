@@ -14,8 +14,8 @@ import (
 )
 
 type AuthClaims struct {
-	Username string `json:"username"`
-	Role     int    `json:"role"`
+	Email string `json:"username"`
+	Role  int    `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -49,8 +49,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims := AuthClaims{
-		Username: user.Email,
-		Role:     user.Role.Value,
+		Email: user.Email,
+		Role:  user.Role.Value,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    fmt.Sprintf("localhost:%d", config.Data.Port),

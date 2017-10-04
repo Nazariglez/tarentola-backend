@@ -38,6 +38,10 @@ func (um *UserModel) BeforeUpdate(scope *gorm.Scope) error {
 	return nil
 }
 
+func UserModelFindOne(um *UserModel) error {
+	return db.Where(*um).First(&um).Error
+}
+
 func UserModelFindToLogin(email, password string) (*UserModel, error) {
 	um := UserModel{}
 
