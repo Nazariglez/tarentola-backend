@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "d2709f9f1f31ebcda9651b03077758c1f3a0018c"
+  version = "v3.0.0"
+
+[[projects]]
   name = "github.com/gorilla/context"
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
@@ -12,12 +24,6 @@
   packages = ["."]
   revision = "24fca303ac6da784b9e8269f724ddeb0b2eea5e7"
   version = "v1.5.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/gorilla/pat"
-  packages = ["."]
-  revision = "cf955c3d1f2c27ee96f93e9738085c762ff5f49d"
 
 [[projects]]
   name = "github.com/jinzhu/gorm"
@@ -37,9 +43,21 @@
   packages = [".","hstore","oid"]
   revision = "b77235e3890a962fe8a6f8c4c7198679ca7814e7"
 
+[[projects]]
+  branch = "master"
+  name = "github.com/nazariglez/logger"
+  packages = ["."]
+  revision = "2d9a34bdf9a093b93560d7e6db1b19f4fd3d9151"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["bcrypt","blowfish"]
+  revision = "9419663f5a44be8b34ca85f08abc5fe1be11f8a3"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "693354ca19fcb8f32af3ddbc0b9fd90faadfee1e2109a2591b8232234f9dc8e0"
+  inputs-digest = "80bf9412cb5fe972134faa9e632414a696d9e55a23643e090315616644347682"
   solver-name = "gps-cdcl"
   solver-version = 1
