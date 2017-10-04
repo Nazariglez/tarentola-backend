@@ -35,11 +35,16 @@ var Data = func() *configObject {
 }()
 
 type configObject struct {
-	Name     string
-	Port     int
-	Database database
-	Logger   logger
-	Auth     auth
+	Name        string
+	Port        int
+	Environment string
+	Database    database
+	Logger      logger
+	Auth        auth
+}
+
+func (c *configObject) IsProd() bool {
+	return c.Environment == "production"
 }
 
 type logger struct {
@@ -65,8 +70,9 @@ type auth struct {
 }
 
 var example = `
-name = "Tarentola"      #app name
-port = 8000             #http port
+name = "Tarentola"      				#app name
+port = 8000             				#http port
+environment = "development" 		#[production, others...]
 
 [database]
 host = "localhost"

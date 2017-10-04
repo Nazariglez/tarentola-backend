@@ -13,6 +13,12 @@ import (
 )
 
 func main() {
+	if config.Data.IsProd() {
+		logger.Log.Infof("%s initiated in 'production' mode.", config.Data.Name)
+	} else {
+		logger.Log.Debugf("%s initiated in '%s' mode.", config.Data.Name, config.Data.Environment)
+	}
+
 	err := database.Open()
 	if err != nil {
 		logger.Log.Fatal(err)
