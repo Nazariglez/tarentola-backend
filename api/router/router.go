@@ -3,7 +3,7 @@
 package router
 
 import (
-	"github.com/gorilla/pat"
+	"github.com/gorilla/mux"
 	"github.com/nazariglez/tarentola-backend/api/middlewares"
 	"net/http"
 )
@@ -17,7 +17,7 @@ const (
 	DELETE
 )
 
-var router *pat.Router
+var router *mux.Router
 
 type route struct {
 	method     HttpMethod
@@ -26,29 +26,40 @@ type route struct {
 	middleware string
 }
 
-func GetRouter() *pat.Router {
+func GetRouter() *mux.Router {
 	if router != nil {
 		return router
 	}
 
-	router = pat.New()
+	router = mux.NewRouter()
 	for _, r := range routeList {
-		handler := middlewares.ParseForm(r.handler)
+		handler := middlewares.ParseForm(ParseURL(r.handler))
 		if r.middleware != "" {
 			handler = middlewares.Apply(r.middleware, handler)
 		}
 
 		switch r.method {
 		case GET:
-			router.Get(r.url, handler)
+			router.HandleFunc(r.url, handler).Methods("GET")
 		case PUT:
-			router.Put(r.url, handler)
+			router.HandleFunc(r.url, handler).Methods("PUT")
 		case POST:
-			router.Post(r.url, handler)
+			router.HandleFunc(r.url, handler).Methods("POST")
 		case DELETE:
-			router.Delete(r.url, handler)
+			router.HandleFunc(r.url, handler).Methods("DELETE")
 		}
 	}
 
 	return router
+}
+
+func ParseURL(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		for k, v := range vars {
+			r.Form.Set(k, v)
+		}
+
+		next(w, r)
+	}
 }
