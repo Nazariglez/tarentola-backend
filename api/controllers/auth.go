@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nazariglez/tarentola-backend/config"
+	"github.com/nazariglez/tarentola-backend/database"
 	"net/http"
 	"strings"
 	"time"
@@ -28,19 +29,28 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Add(time.Second * time.Duration(config.Data.Auth.TokenExpire)).
 		Unix()
 
-	user := r.Form.Get("username")
-	pass := r.Form.Get("password")
+	email := strings.TrimSpace(r.Form.Get("email"))
+	pass := strings.TrimSpace(r.Form.Get("password"))
 
-	if strings.TrimSpace(user) == "" || strings.TrimSpace(pass) == "" {
-		SendBadRequest(w, "Empty username or password.")
+	if email == "" || pass == "" {
+		SendBadRequest(w, "Empty email or password.")
 		return
 	}
 
-	fmt.Println(user, pass)
+	user, err := database.UserModelFindToLogin(email, pass)
+	if err != nil {
+		SendServerError(w, err)
+		return
+	}
+
+	if user == nil {
+		SendBadRequest(w, "Invalid email or password.")
+		return
+	}
 
 	claims := AuthClaims{
-		Username: "myusername", //todo get data from the db
-		Role:     0,
+		Username: user.Email,
+		Role:     user.Role.Value,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    fmt.Sprintf("localhost:%d", config.Data.Port),

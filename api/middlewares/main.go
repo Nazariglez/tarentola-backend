@@ -6,7 +6,6 @@ import (
 	"github.com/nazariglez/tarentola-backend/api/controllers"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
-	"strings"
 )
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
@@ -14,6 +13,9 @@ type Middleware func(next http.HandlerFunc) http.HandlerFunc
 var list = map[string][]Middleware{
 	"isLogged": {
 		isLogged,
+	},
+	"isNotLogged": {
+		isNotLogged,
 	},
 }
 
@@ -35,25 +37,6 @@ func ParseForm(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			controllers.SendServerError(w, err)
-			return
-		}
-
-		next(w, r)
-	}
-}
-
-func isLogged(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
-
-		if len(auth) != 2 || auth[0] != "Bearer" {
-			controllers.SendForbidden(w, "Invalid auth token.")
-			return
-		}
-
-		_, err := controllers.ValidateToken(auth[1])
-		if err != nil {
-			controllers.SendForbidden(w, err.Error())
 			return
 		}
 

@@ -29,8 +29,6 @@ func Open() error {
 	_db.LogMode(config.Data.Database.Debug)
 	_db.AutoMigrate(modelList...)
 
-	//todo prod credentials
-
 	db = _db
 	return nil
 }
@@ -45,4 +43,8 @@ func Close() error {
 
 func GetDB() *gorm.DB {
 	return db
+}
+
+func IsNotFoundErr(err error) bool {
+	return gorm.ErrRecordNotFound == err
 }
