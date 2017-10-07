@@ -3,6 +3,7 @@
 package router
 
 import (
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nazariglez/tarentola-backend/api/middlewares"
 	"net/http"
@@ -32,6 +33,7 @@ func GetRouter() *mux.Router {
 	}
 
 	router = mux.NewRouter()
+	router.StrictSlash(true)
 	for _, r := range routeList {
 		handler := middlewares.ParseForm(ParseURL(r.handler))
 		if r.middleware != "" {
@@ -62,4 +64,13 @@ func ParseURL(next http.HandlerFunc) http.HandlerFunc {
 
 		next(w, r)
 	}
+}
+
+func AllowCORS(h http.Handler) http.Handler {
+	allowed := []handlers.CORSOption{
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"POST", "OPTIONS", "GET", "PUT", "DELETE"}),
+		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "X-Auth-Token"}),
+	}
+	return handlers.CORS(allowed...)(h)
 }

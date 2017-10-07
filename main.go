@@ -26,8 +26,8 @@ func main() {
 
 	defer database.Close()
 
-	http.Handle("/", router.GetRouter())
+	//http.Handle("/", router.AllowCORS(router.GetRouter()))
 	port := ":" + strconv.Itoa(config.Data.Port)
 	logger.Log.Logf("Listening on 127.0.0.1%s...", port)
-	logger.Log.Error(http.ListenAndServe(port, nil))
+	logger.Log.Error(http.ListenAndServe(port, router.AllowCORS(router.GetRouter())))
 }
