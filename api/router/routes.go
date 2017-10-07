@@ -10,8 +10,11 @@ var routeList = []route{
 
 	{POST, "/login", controllers.Login, "isNotLogged"},
 
-	{PUT, "/user/{id}", controllers.UpdateUser, "isLogged"},
-	{DELETE, "/user/{id}", controllers.DeleteUser, "isLogged"},
+	{GET, "/user/{id}", controllers.GetUserByID, "isLogged"},
+
+	{GET, "/user", controllers.GetUser, "isLogged"},
+	{PUT, "/user", controllers.UpdateUser, "isLogged"},
+	{DELETE, "/user", controllers.DeleteUser, "isLogged"},
 	{POST, "/user", controllers.CreateUser, "isNotLogged"},
 
 	{GET, "/", controllers.NotFound, ""},

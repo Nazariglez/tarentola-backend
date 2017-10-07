@@ -38,6 +38,19 @@ func (um *UserModel) BeforeUpdate(scope *gorm.Scope) error {
 	return nil
 }
 
+func UserModelDeleteByID(id uint) error {
+	return db.Where("id = ?", id).Delete(&UserModel{}).Error
+}
+
+func UserModelGetByID(id uint) (*UserModel, error) {
+	um := &UserModel{}
+	err := db./*Preload("Role").*/Where("id = ?", id).Find(um).Error
+	if err != nil {
+		return nil, err
+	}
+	return um, nil
+}
+
 func UserModelFindOne(um *UserModel) error {
 	return db.Where(*um).First(&um).Error
 }
@@ -45,7 +58,7 @@ func UserModelFindOne(um *UserModel) error {
 func UserModelFindToLogin(email, password string) (*UserModel, error) {
 	um := UserModel{}
 
-	if err := db.Where(map[string]interface{}{
+	if err := db./*Preload("Role").*/Select("id, email, role").Where(map[string]interface{}{
 		"email": email,
 	}).First(&um).Error; err != nil {
 		if IsNotFoundErr(err) {

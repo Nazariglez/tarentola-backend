@@ -11,15 +11,18 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"github.com/nazariglez/tarentola-backend/utils"
 )
 
 type AuthClaims struct {
+	ID    uint   `json:"id"`
 	Email string `json:"username"`
 	Role  int    `json:"role"`
 	jwt.StandardClaims
 }
 
 type loginObj struct {
+	ID       uint   `json:"id"`
 	ExpireAt int64  `json:"expireAt"`
 	Token    string `json:"token"`
 }
@@ -37,6 +40,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := utils.ValidateEmailFormat(email); err != nil {
+		SendBadRequest(w, err.Error())
+		return
+	}
+
 	user, err := database.UserModelFindToLogin(email, pass)
 	if err != nil {
 		SendServerError(w, err)
@@ -49,8 +57,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims := AuthClaims{
+		ID:    user.ID,
 		Email: user.Email,
-		Role:  user.Role.Value,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    fmt.Sprintf("localhost:%d", config.Data.Port),
@@ -61,6 +69,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	signedToken, _ := token.SignedString([]byte(config.Data.Auth.Secret))
 
 	data := loginObj{
+		ID:       user.ID,
 		ExpireAt: expireToken,
 		Token:    signedToken,
 	}

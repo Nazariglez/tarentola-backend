@@ -3,15 +3,92 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/nazariglez/tarentola-backend/database"
 	"net/http"
 	"strconv"
 	"strings"
+	"github.com/nazariglez/tarentola-backend/utils"
 )
 
 func TestToken(w http.ResponseWriter, r *http.Request) {
 	SendOk(w)
+	return
+}
+
+type publicUserInfo struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"`
+}
+
+type ownUserInfo struct {
+	publicUserInfo
+	Email string `json:"email"`
+}
+
+//public info
+func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimSpace(r.Form.Get("id"))
+	if id == "" {
+		SendBadRequest(w, "Invalid user id.")
+		return
+	}
+
+	uid, err := strconv.Atoi(id)
+	if err != nil {
+		SendBadRequest(w, err.Error())
+		return
+	}
+
+	user, err := database.UserModelGetByID(uint(uid))
+	if err != nil {
+		if database.IsNotFoundErr(err) {
+			SendBadRequest(w, "Invalid user id.")
+			return
+		}
+
+		SendServerError(w, err)
+		return
+	}
+
+	data := publicUserInfo{
+		ID:   user.ID,
+		Name: user.Name,
+		Role: user.Role.Name,
+	}
+	SendOk(w, data)
+	return
+}
+
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	claims, err := ValidateToken(GetToken(r))
+	if err != nil {
+		SendBadRequest(w, err.Error())
+		return
+	}
+
+	user, err := database.UserModelGetByID(claims.ID)
+	if err != nil {
+		if database.IsNotFoundErr(err) {
+			SendBadRequest(w, "Invalid user.")
+			return
+		}
+
+		SendServerError(w, err)
+		return
+	}
+
+	public := publicUserInfo{
+		ID:   user.ID,
+		Name: user.Name,
+		Role: user.Role.Name,
+	}
+
+	data := ownUserInfo{
+		publicUserInfo: public,
+		Email:          user.Email,
+	}
+	SendOk(w, data)
 	return
 }
 
@@ -20,6 +97,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	pass := strings.TrimSpace(r.Form.Get("password"))
 	if email == "" || pass == "" {
 		SendBadRequest(w, "All fields are required.")
+		return
+	}
+
+	if err := utils.ValidateEmailFormat(email); err != nil {
+		SendBadRequest(w, err.Error())
 		return
 	}
 
@@ -54,39 +136,24 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	id := strings.TrimSpace(r.Form.Get("id"))
-	if id == "" {
-		SendBadRequest(w, "Invalid user id.")
-		return
-	}
-
-	//todo isAdmin can delete
-
 	claims, err := ValidateToken(GetToken(r))
 	if err != nil {
 		SendBadRequest(w, err.Error())
 		return
 	}
 
-	um := database.UserModel{Email: claims.Email}
-	if err := database.UserModelFindOne(&um); err != nil {
-		SendBadRequest(w, err.Error())
-		return
-	}
-
-	//check if it's the same user
-	uid, err := strconv.Atoi(id)
+	err = database.UserModelDeleteByID(claims.ID)
 	if err != nil {
-		SendBadRequest(w, err.Error())
+		if database.IsNotFoundErr(err) {
+			SendBadRequest(w, "Invalid user id.")
+			return
+		}
+
+		SendServerError(w, err)
 		return
 	}
 
-	if um.ID != uint(uid) {
-		SendForbidden(w)
-		return
-	}
-
-	SendOk(w, fmt.Sprintf("User deleted. %d - %s", um.ID, um.Email))
+	SendOk(w, "User deleted.")
 	return
 }
 
