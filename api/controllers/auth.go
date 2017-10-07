@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nazariglez/tarentola-backend/config"
-	"github.com/nazariglez/tarentola-backend/database"
+	"github.com/nazariglez/tarentola-backend/utils"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/nazariglez/tarentola-backend/utils"
+	"github.com/nazariglez/tarentola-backend/database/usermodel"
 )
 
 type AuthClaims struct {
@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := database.UserModelFindToLogin(email, pass)
+	user, err := usermodel.FindToLogin(email, pass)
 	if err != nil {
 		SendServerError(w, err)
 		return
@@ -56,9 +56,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(user)
+
 	claims := AuthClaims{
 		ID:    user.ID,
 		Email: user.Email,
+		Role: user.Role.Value,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    fmt.Sprintf("localhost:%d", config.Data.Port),

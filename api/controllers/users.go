@@ -3,11 +3,12 @@
 package controllers
 
 import (
-	"github.com/nazariglez/tarentola-backend/database"
+	"github.com/nazariglez/tarentola-backend/utils"
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/nazariglez/tarentola-backend/utils"
+	"github.com/nazariglez/tarentola-backend/database/usermodel"
+	"github.com/nazariglez/tarentola-backend/database/helpers"
 )
 
 func TestToken(w http.ResponseWriter, r *http.Request) {
@@ -40,9 +41,9 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := database.UserModelGetByID(uint(uid))
+	user, err := usermodel.GetByID(uint(uid))
 	if err != nil {
-		if database.IsNotFoundErr(err) {
+		if helpers.IsNotFoundErr(err) {
 			SendBadRequest(w, "Invalid user id.")
 			return
 		}
@@ -67,9 +68,9 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := database.UserModelGetByID(claims.ID)
+	user, err := usermodel.GetByID(claims.ID)
 	if err != nil {
-		if database.IsNotFoundErr(err) {
+		if helpers.IsNotFoundErr(err) {
 			SendBadRequest(w, "Invalid user.")
 			return
 		}
@@ -94,8 +95,9 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := strings.TrimSpace(r.Form.Get("email"))
+	name := strings.TrimSpace(r.Form.Get("name"))
 	pass := strings.TrimSpace(r.Form.Get("password"))
-	if email == "" || pass == "" {
+	if email == "" || pass == "" || name == "" {
 		SendBadRequest(w, "All fields are required.")
 		return
 	}
@@ -105,7 +107,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	exists, err := database.UserModelExistsEmail(email)
+	exists, err := usermodel.ExistsEmail(email)
 	if err != nil {
 		SendServerError(w, err)
 		return
@@ -116,12 +118,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userModel := database.UserModel{
+	userModel := usermodel.User{
 		Email:    email,
 		Password: pass,
+		Name: name,
 	}
 
-	if err := database.UserModelCreate(&userModel); err != nil {
+	if err := usermodel.Create(&userModel); err != nil {
 		SendServerError(w, err)
 		return
 	}
@@ -142,9 +145,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = database.UserModelDeleteByID(claims.ID)
+	err = usermodel.DeleteByID(claims.ID)
 	if err != nil {
-		if database.IsNotFoundErr(err) {
+		if helpers.IsNotFoundErr(err) {
 			SendBadRequest(w, "Invalid user id.")
 			return
 		}

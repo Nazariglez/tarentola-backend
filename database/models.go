@@ -2,7 +2,17 @@
 
 package database
 
-var modelList = []interface{}{
-	&UserModel{},
-	&RoleModel{},
+import (
+	"github.com/jinzhu/gorm"
+
+	"github.com/nazariglez/tarentola-backend/database/rolemodel"
+	"github.com/nazariglez/tarentola-backend/database/usermodel"
+)
+
+type InitFunc func() error
+type ModelInit func(database *gorm.DB) (interface{}, func() error)
+
+var modelInitList = []ModelInit{
+	usermodel.Init,
+	rolemodel.Init,
 }

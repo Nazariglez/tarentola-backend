@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/nazariglez/tarentola-backend/config"
+	"github.com/nazariglez/tarentola-backend/logger"
 )
 
 var db *gorm.DB
@@ -26,11 +27,33 @@ func Open() error {
 		return err
 	}
 
-	_db.LogMode(config.Data.Database.Debug)
-	_db.AutoMigrate(modelList...)
-
 	db = _db
+
+	db.LogMode(config.Data.Database.Debug)
+	initModels(db)
 	return nil
+}
+
+func initModels(db *gorm.DB) {
+	modelList := []interface{}{}
+	initList := []InitFunc{}
+	for _, init := range modelInitList {
+		m, f := init(db)
+		modelList = append(modelList, m)
+		initList = append(initList, f)
+	}
+
+	//init tables
+	db.AutoMigrate(modelList...)
+
+	//exec custom init functions
+	for _, f := range initList {
+		if f != nil {
+			if err := f(); err != nil {
+				logger.Log.Fatal(err)
+			}
+		}
+	}
 }
 
 func Close() error {
@@ -43,8 +66,4 @@ func Close() error {
 
 func GetDB() *gorm.DB {
 	return db
-}
-
-func IsNotFoundErr(err error) bool {
-	return gorm.ErrRecordNotFound == err
 }
