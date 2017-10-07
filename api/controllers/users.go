@@ -3,12 +3,12 @@
 package controllers
 
 import (
+	"github.com/nazariglez/tarentola-backend/database/helpers"
+	"github.com/nazariglez/tarentola-backend/database/usermodel"
 	"github.com/nazariglez/tarentola-backend/utils"
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/nazariglez/tarentola-backend/database/usermodel"
-	"github.com/nazariglez/tarentola-backend/database/helpers"
 )
 
 func TestToken(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +121,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	userModel := usermodel.User{
 		Email:    email,
 		Password: pass,
-		Name: name,
+		Name:     name,
 	}
 
 	if err := usermodel.Create(&userModel); err != nil {
@@ -134,7 +134,45 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	SendOk(w, "User updated. "+r.Form.Get("id"))
+	email := strings.TrimSpace(r.Form.Get("email"))
+	name := strings.TrimSpace(r.Form.Get("name"))
+	pass := strings.TrimSpace(r.Form.Get("password"))
+	if !(email != "" || name != "" || pass != "") {
+		SendBadRequest(w, "Invalid field to update.")
+		return
+	}
+
+	claims, err := ValidateToken(GetToken(r))
+	if err != nil {
+		SendBadRequest(w, err.Error())
+		return
+	}
+
+	data := map[string]interface{}{}
+	if email != "" {
+		data["email"] = email
+	}
+
+	if pass != "" {
+		data["password"] = pass
+	}
+
+	if name != "" {
+		data["name"] = name
+	}
+
+	err = usermodel.UpdateFields(claims.ID, data)
+	if err != nil {
+		if helpers.IsNotFoundErr(err) {
+			SendBadRequest(w, "Invalid user id.")
+			return
+		}
+
+		SendServerError(w, err)
+		return
+	}
+
+	SendOk(w, "User updated.")
 	return
 }
 

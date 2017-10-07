@@ -36,11 +36,13 @@ func (u *User) BeforeCreate(scope *gorm.Scope) error {
 }
 
 func (u *User) BeforeUpdate(scope *gorm.Scope) error {
-	pw, err := hashPassword(u.Password)
-	if err != nil {
-		return err
-	}
+	if u.Password != "" {
+		pw, err := hashPassword(u.Password)
+		if err != nil {
+			return err
+		}
 
-	scope.SetColumn("HashedPassword", pw)
+		scope.SetColumn("HashedPassword", pw)
+	}
 	return nil
 }

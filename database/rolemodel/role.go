@@ -3,8 +3,8 @@
 package rolemodel
 
 import (
-  "github.com/jinzhu/gorm"
-  "github.com/nazariglez/tarentola-backend/database/helpers"
+	"github.com/jinzhu/gorm"
+	"github.com/nazariglez/tarentola-backend/database/helpers"
 )
 
 type Role struct {
@@ -22,20 +22,19 @@ func Init(database *gorm.DB) (interface{}, func() error) {
 }
 
 func initModel() error {
-  err := db.Where("name = ?", "User").First(&Role{}).Error
-  if helpers.IsNotFoundErr(err) {
-    err := db.Create(&Role{Name: "User", Value: 0}).Error
-    if err != nil {
-      return err
-    }
+	err := db.Where("name = ?", "User").First(&Role{}).Error
+	if helpers.IsNotFoundErr(err) {
+		err := db.Create(&Role{Name: "User", Value: 0}).Error
+		if err != nil {
+			return err
+		}
 
-    return nil
-  }
+		return nil
+	}
 
-  if err != nil {
-    return err
-  }
+	if err != nil {
+		return err
+	}
 
-  return nil
+	return nil
 }
-

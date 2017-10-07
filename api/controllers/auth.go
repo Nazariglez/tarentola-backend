@@ -7,17 +7,15 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nazariglez/tarentola-backend/config"
+	"github.com/nazariglez/tarentola-backend/database/usermodel"
 	"github.com/nazariglez/tarentola-backend/utils"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/nazariglez/tarentola-backend/database/usermodel"
 )
 
 type AuthClaims struct {
-	ID    uint   `json:"id"`
-	Email string `json:"username"`
-	Role  int    `json:"role"`
+	ID uint `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -56,12 +54,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(user)
-
 	claims := AuthClaims{
-		ID:    user.ID,
-		Email: user.Email,
-		Role: user.Role.Value,
+		ID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireToken,
 			Issuer:    fmt.Sprintf("localhost:%d", config.Data.Port),
