@@ -70,7 +70,7 @@ func AllowCORS(h http.Handler) http.Handler {
 	allowed := []handlers.CORSOption{
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowedMethods([]string{"POST", "OPTIONS", "GET", "PUT", "DELETE"}),
-		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "X-Auth-Token"}),
+		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "Authorization"}),
 	}
 	return handlers.CORS(allowed...)(h)
 }
