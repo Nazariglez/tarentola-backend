@@ -56,7 +56,7 @@ func FindToLogin(email, password string) (*User, error) {
 }
 
 func UpdateFields(id uint, fields map[string]interface{}) error {
-	return db.Model(&User{}).Updates(fields).Error
+	return db.Model(&User{}).Where("id = ?", id).Updates(fields).Error
 }
 
 func Create(u *User) error {
