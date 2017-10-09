@@ -13,6 +13,8 @@ var roleList = []string{
 	"Admin",
 }
 
+var currentRoles = []Role{}
+
 type Role struct {
 	gorm.Model
 
@@ -56,7 +58,7 @@ func initModel() error {
 		return createRoles(list)
 	}
 
-	return nil
+	return fillCurrentRoles()
 }
 
 func createRoles(list []string) error {
@@ -66,5 +68,15 @@ func createRoles(list []string) error {
 		}
 	}
 
+	return fillCurrentRoles()
+}
+
+func fillCurrentRoles() error {
+	roles := []Role{}
+	if err := db.Select("id, name").Find(&roles).Error; err != nil {
+		return err
+	}
+
+	currentRoles = roles
 	return nil
 }

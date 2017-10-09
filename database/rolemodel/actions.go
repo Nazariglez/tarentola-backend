@@ -2,11 +2,19 @@
 
 package rolemodel
 
-func GetList() ([]Role, error) {
-	roles := []Role{}
-	if err := db.Find(&roles).Error; err != nil {
-		return []Role{}, err
+func GetList() []Role {
+	return currentRoles
+}
+
+func GetID(name string) uint {
+	var id uint = 0
+
+	for _, r := range currentRoles {
+		if name == r.Name {
+			id = r.ID
+			break
+		}
 	}
 
-	return roles, nil
+	return id
 }

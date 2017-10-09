@@ -13,11 +13,7 @@ type roleInfo struct {
 }
 
 func GetRoles(w http.ResponseWriter, r *http.Request) {
-	list, err := rolemodel.GetList()
-	if err != nil {
-		SendServerError(w, err)
-		return
-	}
+	list := rolemodel.GetList()
 
 	roles := []roleInfo{}
 	for _, r := range list {
