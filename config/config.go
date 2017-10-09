@@ -41,6 +41,7 @@ type configObject struct {
 	Database    database
 	Logger      logger
 	Auth        auth
+	CORS        cors
 }
 
 func (c *configObject) IsProd() bool {
@@ -69,6 +70,11 @@ type auth struct {
 	Secret      string
 }
 
+type cors struct {
+	Enabled bool
+	Origins []string
+}
+
 var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
@@ -92,4 +98,8 @@ path = "./logs"
 [auth]
 token_expire = 3600			#seconds
 secret = "please change me in production!"	#secret key to sign the auth token
+
+[cors]									#cross domain requests
+enabled = true
+origins = ["*"]
 `

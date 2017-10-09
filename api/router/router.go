@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nazariglez/tarentola-backend/api/middlewares"
+	"github.com/nazariglez/tarentola-backend/config"
+	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
 )
 
@@ -67,8 +69,14 @@ func ParseURL(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func AllowCORS(h http.Handler) http.Handler {
+	if !config.Data.CORS.Enabled {
+		return h
+	}
+
+	logger.Log.Debug("HTTP CORS enabled.")
+
 	allowed := []handlers.CORSOption{
-		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedOrigins(config.Data.CORS.Origins),
 		handlers.AllowedMethods([]string{"POST", "OPTIONS", "GET", "PUT", "DELETE"}),
 		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "Authorization"}),
 	}

@@ -28,6 +28,8 @@ func main() {
 
 	//http.Handle("/", router.AllowCORS(router.GetRouter()))
 	port := ":" + strconv.Itoa(config.Data.Port)
+	handler := router.AllowCORS(router.GetRouter())
+
 	logger.Log.Logf("Listening on 127.0.0.1%s...", port)
-	logger.Log.Error(http.ListenAndServe(port, router.AllowCORS(router.GetRouter())))
+	logger.Log.Error(http.ListenAndServe(port, handler))
 }
