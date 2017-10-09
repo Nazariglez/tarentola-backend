@@ -24,7 +24,11 @@ func DeleteByID(id uint) error {
 
 func GetByID(id uint) (*User, error) {
 	um := &User{}
-	err := db.Preload("Role").Where("id = ?", id).Find(um).Error
+	err := db.
+		Preload("Role").
+		Preload("Avatar").
+		Where("id = ?", id).
+		Find(um).Error
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +42,15 @@ func FindOne(u *User) error {
 func FindToLogin(email, password string) (*User, error) {
 	u := User{}
 
-	if err := db.Preload("Role").Select("id, email, hashed_password, role_refer").Where(map[string]interface{}{
-		"email": email,
-	}).First(&u).Error; err != nil {
+	err := db.
+		Preload("Role").
+		Preload("Avatar").
+		Select("id, email, hashed_password, role_refer").
+		Where(map[string]interface{}{
+			"email": email,
+		}).First(&u).Error
+
+	if err != nil {
 		if helpers.IsNotFoundErr(err) {
 			return nil, nil
 		}

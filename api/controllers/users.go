@@ -17,15 +17,18 @@ func TestToken(w http.ResponseWriter, r *http.Request) {
 }
 
 type publicUserInfo struct {
-	ID   uint     `json:"id"`
-	Name string   `json:"name"`
-	Role roleInfo `json:"role"`
+	ID     uint       `json:"id"`
+	Name   string     `json:"name"`
+	Role   roleInfo   `json:"role"`
+	Avatar avatarInfo `json:"avatar"`
 }
 
 type ownUserInfo struct {
 	publicUserInfo
 	Email string `json:"email"`
 }
+
+//todo update avatar
 
 //public info
 func GetUserByID(w http.ResponseWriter, r *http.Request) {

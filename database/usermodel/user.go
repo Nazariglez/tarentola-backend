@@ -4,6 +4,7 @@ package usermodel
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/nazariglez/tarentola-backend/database/avatarmodel"
 	"github.com/nazariglez/tarentola-backend/database/rolemodel"
 )
 
@@ -17,12 +18,22 @@ func Init(database *gorm.DB) (interface{}, func() error) {
 type User struct {
 	gorm.Model
 
-	Name           string         `gorm:"index; unique; required"`
-	Email          string         `gorm:"index; unique; required"`
-	Password       string         `sql:"-"`
-	HashedPassword string         `gorm:"required"`
-	Role           rolemodel.Role `gorm:"ForeignKey:RoleRefer"` // use RoleRefer as foreign key
-	RoleRefer      uint           `sql:"default:'1'"`
+	Name           string `gorm:"index; unique; required"`
+	Email          string `gorm:"index; unique; required"`
+	Password       string `sql:"-"`
+	HashedPassword string `gorm:"required"`
+
+	Active  bool `sql:"default:'false'"`
+	Banned  bool `sql:"default:'false'"`
+	BanTime int  `sql:"default:'-1'"`
+
+	Coins int `sql:"default:'0'"`
+
+	Role      rolemodel.Role `gorm:"ForeignKey:RoleRefer"` // use RoleRefer as foreign key
+	RoleRefer uint           `sql:"default:'1'"`
+
+	Avatar      avatarmodel.Avatar `gorm:"ForeignKey:AvatarRefer"` // use RoleRefer as foreign key
+	AvatarRefer uint
 }
 
 func (u *User) BeforeCreate(scope *gorm.Scope) error {

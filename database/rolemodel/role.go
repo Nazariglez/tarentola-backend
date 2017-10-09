@@ -8,9 +8,10 @@ import (
 )
 
 var roleList = []string{
-	"User",
-	"Moderator",
-	"Admin",
+	"User",      //a normal player
+	"Creator",   //a user who can add new games
+	"Moderator", //a user who can accept and publish pending games
+	"Admin",     //total overpowered!!!
 }
 
 var currentRoles = []Role{}
