@@ -7,7 +7,8 @@ import "github.com/jinzhu/gorm"
 type Video struct {
 	gorm.Model
 
-	URL string
+	URL    string
+	GameID uint
 }
 
 var db *gorm.DB

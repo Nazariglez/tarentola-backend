@@ -9,6 +9,7 @@ import (
 	"github.com/nazariglez/tarentola-backend/database/categorymodel"
 	"github.com/nazariglez/tarentola-backend/database/gamemodel"
 	"github.com/nazariglez/tarentola-backend/database/imagemodel"
+	"github.com/nazariglez/tarentola-backend/database/platformmodel"
 	"github.com/nazariglez/tarentola-backend/database/rolemodel"
 	"github.com/nazariglez/tarentola-backend/database/statemodel"
 	"github.com/nazariglez/tarentola-backend/database/tagmodel"
@@ -24,6 +25,7 @@ var modelInitList = []ModelInit{
 	categorymodel.Init,
 	gamemodel.Init,
 	imagemodel.Init,
+	platformmodel.Init,
 	rolemodel.Init,
 	statemodel.Init,
 	tagmodel.Init,

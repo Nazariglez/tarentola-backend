@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/nazariglez/tarentola-backend/database/categorymodel"
 	"github.com/nazariglez/tarentola-backend/database/imagemodel"
+	"github.com/nazariglez/tarentola-backend/database/platformmodel"
 	"github.com/nazariglez/tarentola-backend/database/statemodel"
 	"github.com/nazariglez/tarentola-backend/database/tagmodel"
 	"github.com/nazariglez/tarentola-backend/database/videomodel"
@@ -15,7 +16,7 @@ type Game struct {
 	gorm.Model
 
 	Title       string `gorm:"index, unique"`
-	URL         string `gorm:"unique"`
+	Platforms   []platformmodel.Platform
 	Description string
 
 	MainImage      imagemodel.Image `gorm:"ForeignKey:MainImageRefer"` //thumbnail
@@ -31,6 +32,9 @@ type Game struct {
 	State      statemodel.State `gorm:"ForeignKey:StateRefer"` //unpublished, toModerate, published, rejected, banned
 	StateRefer uint
 
+	//todo add authors (studio or similar)
+	//todo add uploadedBy
+	//todo add acceptedBy, rejectedBy...
 	//todo add points or stars
 
 	//builtin games
