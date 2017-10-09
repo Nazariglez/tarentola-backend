@@ -17,5 +17,7 @@ var routeList = []route{
 	{DELETE, "/user", controllers.DeleteUser, "isLogged"},
 	{POST, "/user", controllers.CreateUser, "isNotLogged"},
 
+	{GET, "/roles", controllers.GetRoles, ""},
+
 	{GET, "/", controllers.NotFound, ""},
 }

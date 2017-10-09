@@ -17,9 +17,9 @@ func TestToken(w http.ResponseWriter, r *http.Request) {
 }
 
 type publicUserInfo struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"`
+	ID   uint     `json:"id"`
+	Name string   `json:"name"`
+	Role roleInfo `json:"role"`
 }
 
 type ownUserInfo struct {
@@ -55,7 +55,7 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	data := publicUserInfo{
 		ID:   user.ID,
 		Name: user.Name,
-		Role: user.Role.Name,
+		Role: roleInfo{user.Role.ID, user.Role.Name},
 	}
 	SendOk(w, data)
 	return
@@ -82,7 +82,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	public := publicUserInfo{
 		ID:   user.ID,
 		Name: user.Name,
-		Role: user.Role.Name,
+		Role: roleInfo{user.Role.ID, user.Role.Name},
 	}
 
 	data := ownUserInfo{
