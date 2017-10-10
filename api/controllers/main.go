@@ -7,16 +7,16 @@ import (
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	SendNotFound(w)
+	SendNotFound(w, r)
 	return
 }
 
 func Forbidden(w http.ResponseWriter, r *http.Request) {
-	SendForbidden(w)
+	SendForbidden(w, r)
 	return
 }
 
 func Unauthorized(w http.ResponseWriter, r *http.Request) {
-	SendUnauthorized(w)
+	SendUnauthorized(w, r)
 	return
 }

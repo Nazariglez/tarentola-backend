@@ -13,7 +13,7 @@ func isNotLogged(next http.HandlerFunc) http.HandlerFunc {
 		auth := strings.TrimSpace(r.Header.Get("Authorization"))
 
 		if auth != "" {
-			controllers.SendForbidden(w, "You mustn't be logged.")
+			controllers.SendForbidden(w, r, "You mustn't be logged.")
 			return
 		}
 

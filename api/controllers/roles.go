@@ -20,6 +20,6 @@ func GetRoles(w http.ResponseWriter, r *http.Request) {
 		roles = append(roles, roleInfo{r.ID, r.Name})
 	}
 
-	SendOk(w, roles)
+	SendOk(w, r, roles)
 	return
 }

@@ -11,5 +11,5 @@ type avatarInfo struct {
 
 func GetList(w http.ResponseWriter, r *http.Request) {
 	//todo get avatar list
-	SendOk(w)
+	SendOk(w, r)
 }

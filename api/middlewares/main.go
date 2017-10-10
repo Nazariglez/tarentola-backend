@@ -3,10 +3,14 @@
 package middlewares
 
 import (
+	"context"
 	"github.com/nazariglez/tarentola-backend/api/controllers"
 	"github.com/nazariglez/tarentola-backend/logger"
+	"math/rand"
 	"net/http"
 )
+
+const characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ"
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
 
@@ -33,13 +37,45 @@ func Apply(name string, controller http.HandlerFunc) http.HandlerFunc {
 	return controller
 }
 
+func getRandomID() string {
+	id := make([]byte, 10)
+	for i, _ := range id {
+		id[i] = characters[rand.Intn(len(characters))]
+	}
+
+	return string(id)
+}
+
+func InitRequest(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "rid", getRandomID())
+
+		claims, err := controllers.ValidateToken(controllers.GetToken(r))
+		if err != nil {
+			ctx = context.WithValue(ctx, "authErr", err.Error())
+		}
+
+		ctx = context.WithValue(ctx, "user", claims.ID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	}
+}
+
 func ParseForm(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
-			controllers.SendServerError(w, err)
+			controllers.SendServerError(w, r, err)
 			return
 		}
 
 		next(w, r)
+	}
+}
+
+func Logger(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := r.Context().Value("rid").(string)
+		user := r.Context().Value("user").(uint)
+		logger.Log.Tracef("[User:%d - %s] Request (%s) - %s %s", user, r.RemoteAddr, rid, r.Method, r.URL)
+		next.ServeHTTP(w, r)
 	}
 }

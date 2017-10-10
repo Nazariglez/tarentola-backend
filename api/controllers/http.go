@@ -14,7 +14,13 @@ type Base struct {
 	Data    interface{} `json:"data"`
 }
 
-func SendOk(w http.ResponseWriter, args ...interface{}) {
+func getRequestIdAndUser(r *http.Request) (string, uint) {
+	rid := r.Context().Value("rid").(string)
+	user := r.Context().Value("user").(uint)
+	return rid, user
+}
+
+func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
@@ -26,13 +32,16 @@ func SendOk(w http.ResponseWriter, args ...interface{}) {
 		base.Data = args[0]
 	}
 
+	rid, user := getRequestIdAndUser(r)
 	if err := json.NewEncoder(w).Encode(base); err != nil {
-		logger.Log.Error(err)
+		logger.Log.Errorf("[User:%d - %s] ERROR 'OK' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Tracef("[User:%d - %s] Response 'OK' (%s) - %s %s", user, r.RemoteAddr, rid, r.Method, r.URL)
 	}
 }
 
-func SendServerError(w http.ResponseWriter, args ...error) {
+func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(500)
 
@@ -41,18 +50,21 @@ func SendServerError(w http.ResponseWriter, args ...error) {
 		msg = args[0].Error()
 	}
 
-	err := json.NewEncoder(w).Encode(Base{
+	base := Base{
 		Success: false,
 		Message: msg,
-	})
+	}
 
-	if err != nil {
-		logger.Log.Error(err)
+	rid, user := getRequestIdAndUser(r)
+	if err := json.NewEncoder(w).Encode(base); err != nil {
+		logger.Log.Errorf("[User:%d - %s] ERROR 'SERVER ERROR' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Errorf("[User:%d - %s] Response 'SERVER ERROR' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
 	}
 }
 
-func SendBadRequest(w http.ResponseWriter, args ...string) {
+func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusBadRequest)
 
@@ -61,18 +73,21 @@ func SendBadRequest(w http.ResponseWriter, args ...string) {
 		msg = args[0]
 	}
 
-	err := json.NewEncoder(w).Encode(Base{
+	base := Base{
 		Success: false,
 		Message: msg,
-	})
+	}
 
-	if err != nil {
-		logger.Log.Error(err)
+	rid, user := getRequestIdAndUser(r)
+	if err := json.NewEncoder(w).Encode(base); err != nil {
+		logger.Log.Errorf("[User:%d - %s] ERROR 'BAD REQUEST' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Tracef("[User:%d - %s] Response 'BAD REQUEST' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
 	}
 }
 
-func SendNotFound(w http.ResponseWriter, args ...string) {
+func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusNotFound)
 
@@ -81,18 +96,21 @@ func SendNotFound(w http.ResponseWriter, args ...string) {
 		msg = args[0]
 	}
 
-	err := json.NewEncoder(w).Encode(Base{
+	base := Base{
 		Success: false,
 		Message: msg,
-	})
+	}
 
-	if err != nil {
-		logger.Log.Error(err)
+	rid, user := getRequestIdAndUser(r)
+	if err := json.NewEncoder(w).Encode(base); err != nil {
+		logger.Log.Errorf("[User:%d - %s] ERROR 'NOT FOUND' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Tracef("[User:%d - %s] Response 'NOT FOUND' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
 	}
 }
 
-func SendForbidden(w http.ResponseWriter, args ...string) {
+func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusForbidden)
 
@@ -101,18 +119,21 @@ func SendForbidden(w http.ResponseWriter, args ...string) {
 		msg = args[0]
 	}
 
-	err := json.NewEncoder(w).Encode(Base{
+	base := Base{
 		Success: false,
 		Message: msg,
-	})
+	}
 
-	if err != nil {
-		logger.Log.Error(err)
+	rid, user := getRequestIdAndUser(r)
+	if err := json.NewEncoder(w).Encode(base); err != nil {
+		logger.Log.Errorf("[User:%d - %s] ERROR 'FORBIDDEN' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Tracef("[User:%d - %s] Response 'FORBIDDEN' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
 	}
 }
 
-func SendUnauthorized(w http.ResponseWriter, args ...string) {
+func SendUnauthorized(w http.ResponseWriter, r *http.Request, args ...string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusUnauthorized)
 
@@ -121,13 +142,16 @@ func SendUnauthorized(w http.ResponseWriter, args ...string) {
 		msg = args[0]
 	}
 
-	err := json.NewEncoder(w).Encode(Base{
+	base := Base{
 		Success: false,
 		Message: msg,
-	})
+	}
 
-	if err != nil {
-		logger.Log.Error(err)
+	rid, user := getRequestIdAndUser(r)
+	if err := json.NewEncoder(w).Encode(base); err != nil {
+		logger.Log.Errorf("[User:%d - %s] ERROR 'UNAUTHORIZED' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
+	} else {
+		logger.Log.Tracef("[User:%d - %s] Response 'UNAUTHORIZED' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
 	}
 }

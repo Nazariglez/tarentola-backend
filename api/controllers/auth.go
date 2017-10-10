@@ -34,23 +34,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	pass := strings.TrimSpace(r.Form.Get("password"))
 
 	if email == "" || pass == "" {
-		SendBadRequest(w, "Empty email or password.")
+		SendBadRequest(w, r, "Empty email or password.")
 		return
 	}
 
 	if err := utils.ValidateEmailFormat(email); err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
 	user, err := usermodel.FindToLogin(email, pass)
 	if err != nil {
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
 	if user == nil {
-		SendBadRequest(w, "Invalid email or password.")
+		SendBadRequest(w, r, "Invalid email or password.")
 		return
 	}
 
@@ -71,7 +71,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Token:    signedToken,
 	}
 
-	SendOk(w, data)
+	SendOk(w, r, data)
 	return
 }
 

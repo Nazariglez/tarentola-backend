@@ -37,10 +37,14 @@ func GetRouter() *mux.Router {
 	router = mux.NewRouter()
 	router.StrictSlash(true)
 	for _, r := range routeList {
-		handler := middlewares.ParseForm(ParseURL(r.handler))
+		var handler http.HandlerFunc
 		if r.middleware != "" {
 			handler = middlewares.Apply(r.middleware, handler)
 		}
+
+		handler = middlewares.ParseForm(ParseURL(r.handler))
+		handler = middlewares.Logger(handler) //todo if config...
+		handler = middlewares.InitRequest(handler)
 
 		switch r.method {
 		case GET:

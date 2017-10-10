@@ -12,7 +12,7 @@ import (
 )
 
 func TestToken(w http.ResponseWriter, r *http.Request) {
-	SendOk(w)
+	SendOk(w, r)
 	return
 }
 
@@ -34,24 +34,24 @@ type ownUserInfo struct {
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimSpace(r.Form.Get("id"))
 	if id == "" {
-		SendBadRequest(w, "Invalid user id.")
+		SendBadRequest(w, r, "Invalid user id.")
 		return
 	}
 
 	uid, err := strconv.Atoi(id)
 	if err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
 	user, err := usermodel.GetByID(uint(uid))
 	if err != nil {
 		if helpers.IsNotFoundErr(err) {
-			SendBadRequest(w, "Invalid user id.")
+			SendBadRequest(w, r, "Invalid user id.")
 			return
 		}
 
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
@@ -60,25 +60,25 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		Name: user.Name,
 		Role: roleInfo{user.Role.ID, user.Role.Name},
 	}
-	SendOk(w, data)
+	SendOk(w, r, data)
 	return
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	claims, err := ValidateToken(GetToken(r))
 	if err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
 	user, err := usermodel.GetByID(claims.ID)
 	if err != nil {
 		if helpers.IsNotFoundErr(err) {
-			SendBadRequest(w, "Invalid user.")
+			SendBadRequest(w, r, "Invalid user.")
 			return
 		}
 
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
@@ -92,7 +92,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		publicUserInfo: public,
 		Email:          user.Email,
 	}
-	SendOk(w, data)
+	SendOk(w, r, data)
 	return
 }
 
@@ -101,23 +101,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.Form.Get("name"))
 	pass := strings.TrimSpace(r.Form.Get("password"))
 	if email == "" || pass == "" || name == "" {
-		SendBadRequest(w, "All fields are required.")
+		SendBadRequest(w, r, "All fields are required.")
 		return
 	}
 
 	if err := utils.ValidateEmailFormat(email); err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
 	exists, err := usermodel.ExistsEmail(email)
 	if err != nil {
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
 	if exists {
-		SendBadRequest(w, "Email already exists.")
+		SendBadRequest(w, r, "Email already exists.")
 		return
 	}
 
@@ -128,11 +128,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := usermodel.Create(&userModel); err != nil {
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
-	SendOk(w, "User created.")
+	SendOk(w, r, "User created.")
 	return
 }
 
@@ -141,13 +141,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	name := strings.TrimSpace(r.Form.Get("name"))
 	pass := strings.TrimSpace(r.Form.Get("password"))
 	if !(email != "" || name != "" || pass != "") {
-		SendBadRequest(w, "Invalid field to update.")
+		SendBadRequest(w, r, "Invalid field to update.")
 		return
 	}
 
 	claims, err := ValidateToken(GetToken(r))
 	if err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
@@ -167,37 +167,37 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	err = usermodel.UpdateFields(claims.ID, data)
 	if err != nil {
 		if helpers.IsNotFoundErr(err) {
-			SendBadRequest(w, "Invalid user id.")
+			SendBadRequest(w, r, "Invalid user id.")
 			return
 		}
 
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
-	SendOk(w, "User updated.")
+	SendOk(w, r, "User updated.")
 	return
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	claims, err := ValidateToken(GetToken(r))
 	if err != nil {
-		SendBadRequest(w, err.Error())
+		SendBadRequest(w, r, err.Error())
 		return
 	}
 
 	err = usermodel.DeleteByID(claims.ID)
 	if err != nil {
 		if helpers.IsNotFoundErr(err) {
-			SendBadRequest(w, "Invalid user id.")
+			SendBadRequest(w, r, "Invalid user id.")
 			return
 		}
 
-		SendServerError(w, err)
+		SendServerError(w, r, err)
 		return
 	}
 
-	SendOk(w, "User deleted.")
+	SendOk(w, r, "User deleted.")
 	return
 }
 
