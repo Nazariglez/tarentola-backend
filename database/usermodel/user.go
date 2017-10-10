@@ -4,6 +4,7 @@ package usermodel
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/nazariglez/tarentola-backend/database/achievementmodel"
 	"github.com/nazariglez/tarentola-backend/database/avatarmodel"
 	"github.com/nazariglez/tarentola-backend/database/rolemodel"
 )
@@ -34,6 +35,8 @@ type User struct {
 
 	Avatar      avatarmodel.Avatar `gorm:"ForeignKey:AvatarRefer"` // use RoleRefer as foreign key
 	AvatarRefer uint
+
+	Achievements []achievementmodel.Achievement
 }
 
 func (u *User) BeforeCreate(scope *gorm.Scope) error {
