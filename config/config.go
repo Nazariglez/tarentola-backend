@@ -38,6 +38,7 @@ type configObject struct {
 	Name        string
 	Port        int
 	Environment string
+	Static      static
 	Database    database
 	Logger      logger
 	Auth        auth
@@ -75,10 +76,21 @@ type cors struct {
 	Origins []string
 }
 
+type static struct {
+	Enabled bool
+	Port    int
+	Path    string
+}
+
 var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
 environment = "development" 		#[production, others...]
+
+[static]								#static files
+enabled = true
+port = 8050
+path = "./static"
 
 [database]
 host = "localhost"

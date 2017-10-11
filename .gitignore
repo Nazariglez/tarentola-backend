@@ -77,3 +77,4 @@ typings/
 
 # Tarentola configs
 *.config.toml
+static

@@ -5,8 +5,8 @@ package logger
 import (
 	_logger "github.com/nazariglez/logger"
 	"github.com/nazariglez/tarentola-backend/config"
-	"strings"
 	"os"
+	"strings"
 )
 
 var Log = func() *_logger.Logger {

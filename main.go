@@ -7,6 +7,7 @@ import (
 
 	"github.com/nazariglez/tarentola-backend/api/router"
 	"github.com/nazariglez/tarentola-backend/config"
+	"github.com/nazariglez/tarentola-backend/content"
 	"github.com/nazariglez/tarentola-backend/database"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"strconv"
@@ -26,10 +27,11 @@ func main() {
 
 	defer database.Close()
 
-	//http.Handle("/", router.AllowCORS(router.GetRouter()))
+	go content.Serve()
+
 	port := ":" + strconv.Itoa(config.Data.Port)
 	handler := router.AllowCORS(router.GetRouter())
 
-	logger.Log.Logf("Listening on 127.0.0.1%s...", port)
-	logger.Log.Error(http.ListenAndServe(port, handler))
+	logger.Log.Logf("Serving API on 127.0.0.1%s...", port)
+	logger.Log.Fatal(http.ListenAndServe(port, handler))
 }
