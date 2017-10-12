@@ -10,6 +10,8 @@ var routeList = []route{
 
 	{POST, "/login", controllers.Login, "isNotLogged"},
 
+	{POST, "/avatar", controllers.UploadAvatar, ""},
+
 	{GET, "/user/{id}", controllers.GetUserByID, "isLogged"},
 
 	{GET, "/user", controllers.GetUser, "isLogged"},
