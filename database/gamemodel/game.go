@@ -23,6 +23,9 @@ type Game struct {
 	Description string
 	UserID      uint
 
+	PublicKey  string
+	PrivateKey string
+
 	MainImage      imagemodel.Image `gorm:"ForeignKey:MainImageRefer"` //thumbnail
 	MainImageRefer uint
 	MainVideo      videomodel.Video `gorm:"ForeignKey:MainVideoRefer"`
