@@ -9,9 +9,9 @@ import (
 
 func isLogged(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, err := controllers.ValidateToken(controllers.GetToken(r))
-		if err != nil {
-			controllers.SendForbidden(w, r, err.Error())
+		id := controllers.GetRequestUserID(r)
+		if id == 0 {
+			controllers.SendBadRequest(w, r, controllers.GetRequestAuthError(r))
 			return
 		}
 

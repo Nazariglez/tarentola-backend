@@ -15,8 +15,8 @@ type Base struct {
 }
 
 func getRequestIdAndUser(r *http.Request) (string, uint) {
-	rid := r.Context().Value("rid").(string)
-	user := r.Context().Value("user").(uint)
+	rid := GetRequestID(r)
+	user := GetRequestUserID(r)
 	return rid, user
 }
 

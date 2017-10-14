@@ -55,7 +55,7 @@ func InitRequest(next http.HandlerFunc) http.HandlerFunc {
 			ctx = context.WithValue(ctx, "authErr", err.Error())
 		}
 
-		ctx = context.WithValue(ctx, "user", claims.ID)
+		ctx = context.WithValue(ctx, "userID", claims.ID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
@@ -73,8 +73,8 @@ func ParseForm(next http.HandlerFunc) http.HandlerFunc {
 
 func Logger(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := r.Context().Value("rid").(string)
-		user := r.Context().Value("user").(uint)
+		rid := controllers.GetRequestID(r)
+		user := controllers.GetRequestUserID(r)
 		logger.Log.Tracef("[User:%d - %s] Request (%s) - %s %s", user, r.RemoteAddr, rid, r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	}

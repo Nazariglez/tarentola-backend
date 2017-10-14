@@ -11,11 +11,6 @@ import (
 	"strings"
 )
 
-func TestToken(w http.ResponseWriter, r *http.Request) {
-	SendOk(w, r)
-	return
-}
-
 type publicUserInfo struct {
 	ID     uint       `json:"id"`
 	Name   string     `json:"name"`
@@ -199,14 +194,4 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	SendOk(w, r, "User deleted.")
 	return
-}
-
-func GetToken(r *http.Request) string {
-	auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
-
-	if len(auth) != 2 || auth[0] != "Bearer" {
-		return ""
-	}
-
-	return auth[1]
 }

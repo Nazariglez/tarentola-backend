@@ -3,7 +3,6 @@
 package controllers
 
 import (
-	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/nazariglez/tarentola-backend/config"
@@ -73,22 +72,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	SendOk(w, r, data)
 	return
-}
-
-func ValidateToken(token string) (*AuthClaims, error) {
-	t, err := jwt.ParseWithClaims(token, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method")
-		}
-		return []byte(config.Data.Auth.Secret), nil
-	})
-	if err != nil {
-		return &AuthClaims{}, err
-	}
-
-	if claims, ok := t.Claims.(*AuthClaims); ok && t.Valid {
-		return claims, nil
-	}
-
-	return &AuthClaims{}, errors.New("Invalid token")
 }
