@@ -1,6 +1,6 @@
 // Created by nazarigonzalez on 4/10/17.
 
-package middlewares
+package policies
 
 import (
 	"github.com/nazariglez/tarentola-backend/api/controllers"

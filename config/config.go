@@ -38,6 +38,7 @@ type configObject struct {
 	Name        string
 	Port        int
 	Environment string
+	GZIP        bool
 	Static      static
 	Database    database
 	Logger      logger
@@ -86,6 +87,7 @@ var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
 environment = "development" 		#[production, others...]
+gzip = true
 
 [static]								#static files
 enabled = true

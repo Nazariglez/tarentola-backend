@@ -20,10 +20,13 @@ func getRequestIdAndUser(r *http.Request) (string, uint) {
 	return rid, user
 }
 
-func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
+func sendJSON(w http.ResponseWriter, status int, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(status)
+	return json.NewEncoder(w).Encode(data)
+}
 
+func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 	base := Base{
 		Success: true,
 	}
@@ -33,7 +36,7 @@ func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusOK, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'OK' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
@@ -42,9 +45,6 @@ func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 }
 
 func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(500)
-
 	msg := "Server error."
 	if len(args) != 0 {
 		msg = args[0].Error()
@@ -56,7 +56,7 @@ func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusInternalServerError, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'SERVER ERROR' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
@@ -65,9 +65,6 @@ func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
 }
 
 func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusBadRequest)
-
 	msg := "Bad request."
 	if len(args) != 0 {
 		msg = args[0]
@@ -79,7 +76,7 @@ func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusBadRequest, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'BAD REQUEST' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
@@ -88,9 +85,6 @@ func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
 }
 
 func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusNotFound)
-
 	msg := "Not found."
 	if len(args) != 0 {
 		msg = args[0]
@@ -102,7 +96,7 @@ func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusNotFound, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'NOT FOUND' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
@@ -111,9 +105,6 @@ func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
 }
 
 func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusForbidden)
-
 	msg := "Forbidden."
 	if len(args) != 0 {
 		msg = args[0]
@@ -125,7 +116,7 @@ func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusForbidden, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'FORBIDDEN' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
@@ -134,9 +125,6 @@ func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
 }
 
 func SendUnauthorized(w http.ResponseWriter, r *http.Request, args ...string) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusUnauthorized)
-
 	msg := "Authentication fail."
 	if len(args) != 0 {
 		msg = args[0]
@@ -148,7 +136,7 @@ func SendUnauthorized(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
-	if err := json.NewEncoder(w).Encode(base); err != nil {
+	if err := sendJSON(w, http.StatusUnauthorized, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'UNAUTHORIZED' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
 		return
 	} else {

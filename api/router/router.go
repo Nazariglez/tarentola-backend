@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nazariglez/tarentola-backend/api/middlewares"
+	"github.com/nazariglez/tarentola-backend/api/middlewares/policies"
 	"github.com/nazariglez/tarentola-backend/config"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
@@ -23,10 +24,10 @@ const (
 var router *mux.Router
 
 type route struct {
-	method     HttpMethod
-	url        string
-	handler    http.HandlerFunc
-	middleware string
+	method  HttpMethod
+	url     string
+	handler http.HandlerFunc
+	police  string
 }
 
 func GetRouter() *mux.Router {
@@ -38,13 +39,17 @@ func GetRouter() *mux.Router {
 	router.StrictSlash(true)
 	for _, r := range routeList {
 		var handler http.HandlerFunc
-		if r.middleware != "" {
-			handler = middlewares.Apply(r.middleware, handler)
+		if r.police != "" {
+			handler = policies.Apply(r.police, handler)
 		}
 
 		handler = middlewares.ParseForm(ParseURL(r.handler))
-		handler = middlewares.Logger(handler) //todo if config...
+		handler = middlewares.Logger(handler)
 		handler = middlewares.InitRequest(handler)
+
+		if config.Data.GZIP {
+			handler = middlewares.Gzip(handler)
+		}
 
 		switch r.method {
 		case GET:
