@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Backend API for the portal tarentola.com",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "race": "GORACE=halt_on_error=1 go run -race main.go"
   },
   "repository": {
     "type": "git",
