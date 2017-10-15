@@ -50,3 +50,7 @@ func GetRequestID(r *http.Request) string {
 func GetRequestAuthError(r *http.Request) string {
 	return r.Context().Value("authErr").(string)
 }
+
+func GetRequestIPAddr(r *http.Request) string {
+	return r.Context().Value("ipAddr").(string)
+}

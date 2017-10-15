@@ -5,6 +5,7 @@ package middlewares
 import (
 	"context"
 	"github.com/nazariglez/tarentola-backend/api/controllers"
+	"github.com/nazariglez/tarentola-backend/utils"
 	"math/rand"
 	"net/http"
 )
@@ -30,6 +31,7 @@ func InitRequest(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		ctx = context.WithValue(ctx, "userID", claims.ID)
+		ctx = context.WithValue(ctx, "ipAddr", utils.GetIPAddr(r))
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }

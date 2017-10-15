@@ -12,7 +12,8 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := controllers.GetRequestID(r)
 		user := controllers.GetRequestUserID(r)
-		logger.Log.Tracef("[User:%d - %s] Request (%s) - %s %s", user, r.RemoteAddr, rid, r.Method, r.URL)
+		ip := controllers.GetRequestIPAddr(r)
+		logger.Log.Tracef("[User:%d - %s] Request (%s) - %s %s", user, ip, rid, r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	}
 }

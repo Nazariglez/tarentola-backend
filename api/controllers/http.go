@@ -36,11 +36,12 @@ func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusOK, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'OK' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'OK' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Tracef("[User:%d - %s] Response 'OK' (%s) - %s %s", user, r.RemoteAddr, rid, r.Method, r.URL)
+		logger.Log.Tracef("[User:%d - %s] Response 'OK' (%s) - %s %s", user, ip, rid, r.Method, r.URL)
 	}
 }
 
@@ -56,11 +57,12 @@ func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusInternalServerError, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'SERVER ERROR' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'SERVER ERROR' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Errorf("[User:%d - %s] Response 'SERVER ERROR' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
+		logger.Log.Errorf("[User:%d - %s] Response 'SERVER ERROR' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
 
@@ -76,11 +78,12 @@ func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusBadRequest, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'BAD REQUEST' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'BAD REQUEST' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Tracef("[User:%d - %s] Response 'BAD REQUEST' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
+		logger.Log.Tracef("[User:%d - %s] Response 'BAD REQUEST' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
 
@@ -96,11 +99,12 @@ func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusNotFound, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'NOT FOUND' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'NOT FOUND' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Tracef("[User:%d - %s] Response 'NOT FOUND' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
+		logger.Log.Tracef("[User:%d - %s] Response 'NOT FOUND' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
 
@@ -116,11 +120,12 @@ func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusForbidden, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'FORBIDDEN' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'FORBIDDEN' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Tracef("[User:%d - %s] Response 'FORBIDDEN' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
+		logger.Log.Tracef("[User:%d - %s] Response 'FORBIDDEN' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
 
@@ -136,10 +141,11 @@ func SendUnauthorized(w http.ResponseWriter, r *http.Request, args ...string) {
 	}
 
 	rid, user := getRequestIdAndUser(r)
+	ip := GetRequestIPAddr(r)
 	if err := sendJSON(w, http.StatusUnauthorized, base); err != nil {
-		logger.Log.Errorf("[User:%d - %s] ERROR 'UNAUTHORIZED' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, err.Error())
+		logger.Log.Errorf("[User:%d - %s] ERROR 'UNAUTHORIZED' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
 	} else {
-		logger.Log.Tracef("[User:%d - %s] Response 'UNAUTHORIZED' (%s) - %s %s '%s'", user, r.RemoteAddr, rid, r.Method, r.URL, msg)
+		logger.Log.Tracef("[User:%d - %s] Response 'UNAUTHORIZED' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
