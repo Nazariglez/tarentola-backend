@@ -7,6 +7,8 @@ import (
 	"github.com/nazariglez/tarentola-backend/database/achievementmodel"
 	"github.com/nazariglez/tarentola-backend/database/avatarmodel"
 	"github.com/nazariglez/tarentola-backend/database/rolemodel"
+	"github.com/nazariglez/tarentola-backend/logger"
+	"time"
 )
 
 var db *gorm.DB
@@ -26,7 +28,7 @@ type User struct {
 
 	Active  bool `sql:"default:'false'"`
 	Banned  bool `sql:"default:'false'"`
-	BanTime int  `sql:"default:'-1'"`
+	BanTime time.Time
 
 	Coins int `sql:"default:'0'"`
 
@@ -35,6 +37,8 @@ type User struct {
 
 	Avatar      avatarmodel.Avatar `gorm:"ForeignKey:AvatarRefer"` // use RoleRefer as foreign key
 	AvatarRefer uint
+
+	//todo guilds?
 
 	Achievements []achievementmodel.Achievement
 }
@@ -59,4 +63,22 @@ func (u *User) BeforeUpdate(scope *gorm.Scope) error {
 		scope.SetColumn("HashedPassword", pw)
 	}
 	return nil
+}
+
+func (u *User) IsActive() bool {
+	if u.Banned && u.BanTime != (time.Time{}) {
+		diff := time.Now().Sub(u.BanTime)
+		if diff >= 0 {
+
+			if err := BanByID(u.ID, false, time.Time{}); err != nil {
+				logger.Log.Error(err)
+			} else {
+				u.Banned = false
+				u.BanTime = time.Time{}
+			}
+
+		}
+	}
+
+	return u.Active && !u.Banned
 }

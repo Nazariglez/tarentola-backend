@@ -7,6 +7,7 @@ import (
 	"github.com/nazariglez/tarentola-backend/database/helpers"
 	"github.com/nazariglez/tarentola-backend/database/rolemodel"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 func DeleteByID(id uint) error {
@@ -111,6 +112,31 @@ func ExistsEmail(email string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func ActiveByID(id uint, state bool) error {
+	err := db.Model(&User{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"active": state,
+	}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func BanByID(id uint, state bool, t time.Time) error {
+	err := db.Model(&User{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"banned":   state,
+		"ban_time": t,
+	}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 //--
