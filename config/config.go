@@ -84,8 +84,9 @@ type static struct {
 }
 
 type middlewares struct {
-	GZIP   bool
-	Logger bool
+	GZIP         bool
+	Logger       bool
+	RateLimitRPS int `toml:"rate_limit_rps"`
 }
 
 var example = `
@@ -96,6 +97,7 @@ environment = "development" 		#[production, others...]
 [middlewares]
 gzip = true											#gzip http json responses
 logger = true										#logger http request and responses
+rate_limit_rps = 10							#request per second limit (0 = disabled)
 
 [static]								#static files
 enabled = true

@@ -70,7 +70,7 @@ func isPrivateSubnet(ipAddress net.IP) bool {
 }
 
 func GetIPAddr(r *http.Request) string {
-	for _, h := range []string{"X-Forwarded-For", "X-Real-Ip"} {
+	for _, h := range []string{"X-Forwarded-For", "X-Real-Ip", "X-User-Final-IP"} {
 		addresses := strings.Split(r.Header.Get(h), ",")
 		// march from right to left until we get a public address
 		// that will be the address right before our proxy.

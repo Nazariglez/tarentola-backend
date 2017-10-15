@@ -49,10 +49,14 @@ func GetRouter() *mux.Router {
 			handler = middlewares.Logger(handler)
 		}
 
-		handler = middlewares.InitRequest(handler)
-
 		if config.Data.Middlewares.GZIP {
 			handler = middlewares.Gzip(handler)
+		}
+
+		handler = middlewares.InitRequest(handler)
+
+		if config.Data.Middlewares.RateLimitRPS > 0 {
+			handler = middlewares.RateLimit(handler)
 		}
 
 		switch r.method {
@@ -91,7 +95,7 @@ func AllowCORS(h http.Handler) http.Handler {
 	allowed := []handlers.CORSOption{
 		handlers.AllowedOrigins(config.Data.CORS.Origins),
 		handlers.AllowedMethods([]string{"POST", "OPTIONS", "GET", "PUT", "DELETE"}),
-		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "Authorization"}),
+		handlers.AllowedHeaders([]string{"Origin", "Content-Type", "Authorization", "X-User-Final-IP"}),
 	}
 	return handlers.CORS(allowed...)(h)
 }
