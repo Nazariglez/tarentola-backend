@@ -9,6 +9,7 @@ import (
 	"github.com/nazariglez/tarentola-backend/config"
 	"github.com/nazariglez/tarentola-backend/content"
 	"github.com/nazariglez/tarentola-backend/database"
+	"github.com/nazariglez/tarentola-backend/email"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"strconv"
 )
@@ -28,6 +29,8 @@ func main() {
 	defer database.Close()
 
 	go content.Serve()
+
+	email.SendTestEmail([]string{"nazari.nz@gmail.com"})
 
 	port := ":" + strconv.Itoa(config.Data.Port)
 	handler := router.AllowCORS(router.GetRouter())

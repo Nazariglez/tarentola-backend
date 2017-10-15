@@ -44,6 +44,7 @@ type configObject struct {
 	Logger      logger
 	Auth        auth
 	CORS        cors
+	Email       email
 }
 
 func (c *configObject) IsProd() bool {
@@ -89,6 +90,13 @@ type middlewares struct {
 	RateLimitRPS int `toml:"rate_limit_rps"`
 }
 
+type email struct {
+	SMTP     string
+	Port     int
+	User     string
+	Password string
+}
+
 var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
@@ -126,4 +134,10 @@ secret = "please change me in production!"	#secret key to sign the auth token
 [cors]									#cross domain requests
 enabled = true
 origins = ["*"]
+
+[email]
+smtp = "smtp.gmail.com"
+port = 587
+user = "noreply.tarentola@gmail.com"
+password = "012Tarentola_NoReply$1"
 `
