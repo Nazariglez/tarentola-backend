@@ -7,9 +7,14 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 )
 
-//todo improve with pool sync to reuse objects
+var gzipPool = sync.Pool{
+	New: func() interface{} {
+		return gzip.NewWriter(nil)
+	},
+}
 
 type gzipResponseWriter struct {
 	io.Writer
@@ -28,7 +33,11 @@ func Gzip(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Encoding", "gzip")
-		gz := gzip.NewWriter(w)
+
+		gz := gzipPool.Get().(*gzip.Writer)
+		defer gzipPool.Put(gz)
+
+		gz.Reset(w)
 		defer gz.Close()
 
 		gzr := gzipResponseWriter{Writer: gz, ResponseWriter: w}
