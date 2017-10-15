@@ -4,6 +4,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/nazariglez/tarentola-backend/config"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"net/http"
 )
@@ -40,7 +41,9 @@ func SendOk(w http.ResponseWriter, r *http.Request, args ...interface{}) {
 	if err := sendJSON(w, http.StatusOK, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'OK' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Tracef("[User:%d - %s] Response 'OK' (%s) - %s %s", user, ip, rid, r.Method, r.URL)
 	}
 }
@@ -61,7 +64,9 @@ func SendServerError(w http.ResponseWriter, r *http.Request, args ...error) {
 	if err := sendJSON(w, http.StatusInternalServerError, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'SERVER ERROR' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Errorf("[User:%d - %s] Response 'SERVER ERROR' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
@@ -82,7 +87,9 @@ func SendBadRequest(w http.ResponseWriter, r *http.Request, args ...string) {
 	if err := sendJSON(w, http.StatusBadRequest, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'BAD REQUEST' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Tracef("[User:%d - %s] Response 'BAD REQUEST' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
@@ -103,7 +110,9 @@ func SendNotFound(w http.ResponseWriter, r *http.Request, args ...string) {
 	if err := sendJSON(w, http.StatusNotFound, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'NOT FOUND' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Tracef("[User:%d - %s] Response 'NOT FOUND' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
@@ -124,7 +133,9 @@ func SendForbidden(w http.ResponseWriter, r *http.Request, args ...string) {
 	if err := sendJSON(w, http.StatusForbidden, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'FORBIDDEN' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Tracef("[User:%d - %s] Response 'FORBIDDEN' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }
@@ -145,7 +156,9 @@ func SendUnauthorized(w http.ResponseWriter, r *http.Request, args ...string) {
 	if err := sendJSON(w, http.StatusUnauthorized, base); err != nil {
 		logger.Log.Errorf("[User:%d - %s] ERROR 'UNAUTHORIZED' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, err.Error())
 		return
-	} else {
+	}
+
+	if config.Data.Middlewares.Logger {
 		logger.Log.Tracef("[User:%d - %s] Response 'UNAUTHORIZED' (%s) - %s %s '%s'", user, ip, rid, r.Method, r.URL, msg)
 	}
 }

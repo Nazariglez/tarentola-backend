@@ -38,7 +38,7 @@ type configObject struct {
 	Name        string
 	Port        int
 	Environment string
-	GZIP        bool
+	Middlewares middlewares
 	Static      static
 	Database    database
 	Logger      logger
@@ -83,11 +83,19 @@ type static struct {
 	Path    string
 }
 
+type middlewares struct {
+	GZIP   bool
+	Logger bool
+}
+
 var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
 environment = "development" 		#[production, others...]
-gzip = true
+
+[middlewares]
+gzip = true											#gzip http json responses
+logger = true										#logger http request and responses
 
 [static]								#static files
 enabled = true

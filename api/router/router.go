@@ -44,10 +44,14 @@ func GetRouter() *mux.Router {
 		}
 
 		handler = middlewares.ParseForm(ParseURL(r.handler))
-		handler = middlewares.Logger(handler)
+
+		if config.Data.Middlewares.Logger {
+			handler = middlewares.Logger(handler)
+		}
+
 		handler = middlewares.InitRequest(handler)
 
-		if config.Data.GZIP {
+		if config.Data.Middlewares.GZIP {
 			handler = middlewares.Gzip(handler)
 		}
 
