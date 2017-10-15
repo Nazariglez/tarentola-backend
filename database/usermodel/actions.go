@@ -5,6 +5,7 @@ package usermodel
 import (
 	"errors"
 	"github.com/nazariglez/tarentola-backend/database/helpers"
+	"github.com/nazariglez/tarentola-backend/database/rolemodel"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -33,6 +34,31 @@ func GetByID(id uint) (*User, error) {
 		return nil, err
 	}
 	return um, nil
+}
+
+func CreateAdmin(username, email, password string) error {
+	u := User{
+		Email:     email,
+		Name:      username,
+		Password:  password,
+		RoleRefer: rolemodel.GetID("Admin"),
+	}
+
+	return Create(&u)
+}
+
+func ExistsAdmin() (bool, error) {
+	var c int
+	err := db.Model(&User{}).Where("role_refer = ?", rolemodel.GetID("Admin")).Count(&c).Error
+	if err != nil {
+		return false, err
+	}
+
+	if c == 0 {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func FindOne(u *User) error {
