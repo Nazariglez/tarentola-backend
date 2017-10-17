@@ -30,7 +30,19 @@ func main() {
 
 	go content.Serve()
 
-	email.SendTestEmail([]string{"nazari.nz@gmail.com"})
+	e := email.EmailBCC{
+		To:   []string{"nazari.nz@gmail.com", "nazari.nz+test@gmail.com"},
+		Body: email.ConfirmEmailTemplate,
+		Data: map[string]interface{}{
+			"name":              "Manuel",
+			"confirmation_link": "http://google.es",
+		},
+		Subject: "Confirmation link...",
+	}
+
+	if err := e.Send(); err != nil {
+		panic(err)
+	}
 
 	port := ":" + strconv.Itoa(config.Data.Port)
 	handler := router.AllowCORS(router.GetRouter())

@@ -2,28 +2,18 @@
 
 package email
 
-import (
-	"github.com/nazariglez/tarentola-backend/config"
-	"gopkg.in/gomail.v2"
-)
+type Email struct {
+	Body    string
+	Data    map[string]interface{}
+	To      string
+	Subject string
+}
 
-func SendTestEmail(to []string) {
-	m := gomail.NewMessage()
-	m.SetHeader("From", config.Data.Email.User)
-	m.SetHeader("To", to...)
-	//m.SetAddressHeader("Cc", "dan@example.com", "Dan")
-	m.SetHeader("Subject", "Hello!")
-	m.SetBody("text/html", "Hello fff<b>Bob</b> and <i>Cora</i>!")
-
-	d := gomail.NewDialer(
-		config.Data.Email.SMTP,
-		config.Data.Email.Port,
-		config.Data.Email.User,
-		config.Data.Email.Password,
-	)
-
-	// Send the email to Bob, Cora and Dan.
-	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+func (e *Email) Send() error {
+	tpl, err := compileTemplate(e.Body, e.Data)
+	if err != nil {
+		return err
 	}
+
+	return SendEmail(e.To, e.Subject, tpl)
 }
