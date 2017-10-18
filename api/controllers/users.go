@@ -3,6 +3,7 @@
 package controllers
 
 import (
+	"github.com/nazariglez/tarentola-backend/config"
 	"github.com/nazariglez/tarentola-backend/database/helpers"
 	"github.com/nazariglez/tarentola-backend/database/usermodel"
 	"github.com/nazariglez/tarentola-backend/database/usertempmodel"
@@ -12,7 +13,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/nazariglez/tarentola-backend/config"
 )
 
 type publicUserInfo struct {
@@ -97,6 +97,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 func ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	//todo
+
 }
 
 func ResendConfirmEmail(w http.ResponseWriter, r *http.Request) {
