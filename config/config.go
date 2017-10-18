@@ -70,8 +70,10 @@ type database struct {
 }
 
 type auth struct {
-	TokenExpire int `toml:"token_expire"`
-	Secret      string
+	TokenExpire        int `toml:"token_expire"`
+	Secret             string
+	ConfirmAccount     bool `toml:"confirm_account"`
+	ConfirmTokenExpire int  `toml:"confirm_token_expire"`
 }
 
 type cors struct {
@@ -130,8 +132,10 @@ file_level = 0          #same as level but for file output
 path = "./logs"
 
 [auth]
-token_expire = 3600			#seconds
+token_expire = 3600													#seconds
 secret = "please change me in production!"	#secret key to sign the auth token
+confirm_account = false 										#An email will be sent to enable the user account
+confirm_token_expire = 10										#In hours, time to expire the account confirmation link
 
 [cors]									#cross domain requests
 enabled = true

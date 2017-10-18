@@ -72,7 +72,7 @@ func FindToLogin(email, password string) (*User, error) {
 	err := db.
 		Preload("Role").
 		Preload("Avatar").
-		Select("id, email, hashed_password, role_refer").
+		//Select("id, email, hashed_password, role_refer, active, ").
 		Where(map[string]interface{}{
 			"email": email,
 		}).First(&u).Error

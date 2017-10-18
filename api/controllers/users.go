@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"github.com/nazariglez/tarentola-backend/config"
 )
 
 type publicUserInfo struct {
@@ -98,7 +99,7 @@ func ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	//todo
 }
 
-func ReSendConfirmEmail(w http.ResponseWriter, r *http.Request) {
+func ResendConfirmEmail(w http.ResponseWriter, r *http.Request) {
 	//todo
 }
 
@@ -127,11 +128,13 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	active := !config.Data.Auth.ConfirmAccount
+
 	userModel := usermodel.User{
 		Email:    email,
 		Password: pass,
 		Name:     name,
-		Active:   false,
+		Active:   active,
 	}
 
 	if err := usermodel.Create(&userModel); err != nil {
@@ -139,19 +142,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ut, err := usertempmodel.Create(userModel.ID)
-	if err != nil {
-		SendServerError(w, r, err)
-		return
-	}
-
-	//send confirmation email, but don't lock the http response
-	go func(rid string) {
-		if err := emailHelper.SendUserConfirmationEmail(name, email, ut.Token); err != nil {
-			logger.Log.Errorf("%s -> Sending confirmation email to %s in the request %s", err.Error(), email, rid)
+	if !active {
+		ut, err := usertempmodel.Create(userModel.ID)
+		if err != nil {
+			SendServerError(w, r, err)
 			return
 		}
-	}(GetRequestID(r))
+
+		//send confirmation email, but don't lock the http response
+		go func(rid string) {
+			if err := emailHelper.SendUserConfirmationEmail(name, email, ut.Token); err != nil {
+				logger.Log.Errorf("%s -> Sending confirmation email to %s in the request %s", err.Error(), email, rid)
+				return
+			}
+		}(GetRequestID(r))
+	}
 
 	SendOk(w, r, "User created.")
 	return
