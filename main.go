@@ -11,7 +11,9 @@ import (
 	"github.com/nazariglez/tarentola-backend/database"
 	"github.com/nazariglez/tarentola-backend/email"
 	"github.com/nazariglez/tarentola-backend/logger"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -21,6 +23,8 @@ func main() {
 		logger.Log.Debugf("%s initiated in '%s' mode.", config.Data.Name, config.Data.Environment)
 	}
 
+	rand.Seed(time.Now().Unix())
+
 	err := database.Open()
 	if err != nil {
 		logger.Log.Fatal(err)
@@ -29,20 +33,6 @@ func main() {
 	defer database.Close()
 
 	go content.Serve()
-
-	e := email.EmailBCC{
-		To:   []string{"nazari.nz@gmail.com", "nazari.nz+test@gmail.com"},
-		Body: email.ConfirmEmailTemplate,
-		Data: map[string]interface{}{
-			"name":              "Manuel",
-			"confirmation_link": "http://google.es",
-		},
-		Subject: "Confirmation link...",
-	}
-
-	if err := e.Send(); err != nil {
-		panic(err)
-	}
 
 	port := ":" + strconv.Itoa(config.Data.Port)
 	handler := router.AllowCORS(router.GetRouter())
