@@ -18,6 +18,7 @@ import (
 	"github.com/nazariglez/tarentola-backend/database/statemodel"
 	"github.com/nazariglez/tarentola-backend/database/tagmodel"
 	"github.com/nazariglez/tarentola-backend/database/usermodel"
+	"github.com/nazariglez/tarentola-backend/database/usertempmodel"
 	"github.com/nazariglez/tarentola-backend/database/videomodel"
 )
 
@@ -39,5 +40,6 @@ var modelInitList = []ModelInit{
 	statemodel.Init,
 	tagmodel.Init,
 	usermodel.Init,
+	usertempmodel.Init,
 	videomodel.Init,
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/nazariglez/tarentola-backend/config"
 	"github.com/nazariglez/tarentola-backend/content"
 	"github.com/nazariglez/tarentola-backend/database"
-	"github.com/nazariglez/tarentola-backend/email"
 	"github.com/nazariglez/tarentola-backend/logger"
 	"math/rand"
 	"strconv"

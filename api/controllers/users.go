@@ -5,6 +5,9 @@ package controllers
 import (
 	"github.com/nazariglez/tarentola-backend/database/helpers"
 	"github.com/nazariglez/tarentola-backend/database/usermodel"
+	"github.com/nazariglez/tarentola-backend/database/usertempmodel"
+	emailHelper "github.com/nazariglez/tarentola-backend/email"
+	"github.com/nazariglez/tarentola-backend/logger"
 	"github.com/nazariglez/tarentola-backend/utils"
 	"net/http"
 	"strconv"
@@ -91,6 +94,14 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func ConfirmUser(w http.ResponseWriter, r *http.Request) {
+	//todo
+}
+
+func ReSendConfirmEmail(w http.ResponseWriter, r *http.Request) {
+	//todo
+}
+
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := strings.TrimSpace(r.Form.Get("email"))
 	name := strings.TrimSpace(r.Form.Get("name"))
@@ -120,12 +131,27 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		Email:    email,
 		Password: pass,
 		Name:     name,
+		Active:   false,
 	}
 
 	if err := usermodel.Create(&userModel); err != nil {
 		SendServerError(w, r, err)
 		return
 	}
+
+	ut, err := usertempmodel.Create(userModel.ID)
+	if err != nil {
+		SendServerError(w, r, err)
+		return
+	}
+
+	//send confirmation email, but don't lock the http response
+	go func(rid string) {
+		if err := emailHelper.SendUserConfirmationEmail(name, email, ut.Token); err != nil {
+			logger.Log.Errorf("%s -> Sending confirmation email to %s in the request %s", err.Error(), email, rid)
+			return
+		}
+	}(GetRequestID(r))
 
 	SendOk(w, r, "User created.")
 	return
