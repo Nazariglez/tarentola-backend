@@ -38,6 +38,7 @@ type configObject struct {
 	Name        string
 	Port        int
 	Environment string
+	FrontURL    string `toml:"front_url"`
 	Middlewares middlewares
 	Static      static
 	Database    database
@@ -101,6 +102,7 @@ var example = `
 name = "Tarentola"      				#app name
 port = 8000             				#http port
 environment = "development" 		#[production, others...]
+front_url = "tarentola.com"
 
 [middlewares]
 gzip = true											#gzip http json responses
