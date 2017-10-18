@@ -53,6 +53,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !user.IsActive() {
+		if !user.Active {
+			SendBadRequest(w, r, "This account must be activated first.")
+			return
+		}
+
+		if user.Banned {
+			msg := "Account banned."
+			if user.BanTime != (time.Time{}) {
+				msg = fmt.Sprintf("Account banned until: '%s'", user.BanTime.Format("02/01/2006"))
+			}
+
+			SendForbidden(w, r, msg)
+			return
+		}
+	}
+
 	claims := AuthClaims{
 		ID: user.ID,
 		StandardClaims: jwt.StandardClaims{
