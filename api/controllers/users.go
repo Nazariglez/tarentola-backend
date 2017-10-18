@@ -99,7 +99,7 @@ func ConfirmUser(w http.ResponseWriter, r *http.Request) {
 	token := strings.TrimSpace(r.Form.Get("token"))
 	ut, err := usertempmodel.FindByToken(token)
 
-	if helpers.IsNotFoundErr(err) {
+	if helpers.IsNotFoundErr(err) || ut.ID == 0 {
 		SendBadRequest(w, r, "Invalid token.")
 		return
 	}
@@ -109,20 +109,18 @@ func ConfirmUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ut.ID != 0 {
-		err := usermodel.UpdateFields(ut.UserID, map[string]interface{}{
-			"active": true,
-		})
+	err = usermodel.UpdateFields(ut.UserID, map[string]interface{}{
+		"active": true,
+	})
 
-		if err != nil {
-			SendServerError(w, r, err)
-			return
-		}
+	if err != nil {
+		SendServerError(w, r, err)
+		return
+	}
 
-		if err := usertempmodel.DeleteByID(ut.ID); err != nil {
-			SendServerError(w, r, err)
-			return
-		}
+	if err := usertempmodel.DeleteByID(ut.ID); err != nil {
+		SendServerError(w, r, err)
+		return
 	}
 
 	SendOk(w, r)
