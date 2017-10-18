@@ -2,6 +2,11 @@
 
 package email
 
+import (
+	"github.com/nazariglez/tarentola-backend/config"
+	"gopkg.in/gomail.v2"
+)
+
 type Email struct {
 	Body    string
 	Data    map[string]interface{}
@@ -16,4 +21,14 @@ func (e *Email) Send() error {
 	}
 
 	return SendEmail(e.To, e.Subject, tpl)
+}
+
+func SendEmail(to, subject, body string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", config.Data.Email.User)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", body)
+
+	return dial.DialAndSend(m)
 }

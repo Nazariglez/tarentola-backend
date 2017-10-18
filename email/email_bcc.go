@@ -2,6 +2,11 @@
 
 package email
 
+import (
+	"github.com/nazariglez/tarentola-backend/config"
+	"gopkg.in/gomail.v2"
+)
+
 //blind carbon copy emails
 type EmailBCC struct {
 	Body    string
@@ -17,4 +22,14 @@ func (e *EmailBCC) Send() error {
 	}
 
 	return SendEmailBCC(e.To, e.Subject, tpl)
+}
+
+func SendEmailBCC(to []string, subject, body string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", config.Data.Email.User)
+	m.SetHeader("Bcc", to...)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", body)
+
+	return dial.DialAndSend(m)
 }

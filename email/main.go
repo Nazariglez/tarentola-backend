@@ -22,23 +22,3 @@ func compileTemplate(tpl string, data map[string]interface{}) (string, error) {
 	tpl, err := plush.Render(tpl, ctx)
 	return tpl, err
 }
-
-func SendEmail(to, subject, body string) error {
-	m := gomail.NewMessage()
-	m.SetHeader("From", config.Data.Email.User)
-	m.SetHeader("To", to)
-	m.SetHeader("Subject", subject)
-	m.SetBody("text/html", body)
-
-	return dial.DialAndSend(m)
-}
-
-func SendEmailBCC(to []string, subject, body string) error {
-	m := gomail.NewMessage()
-	m.SetHeader("From", config.Data.Email.User)
-	m.SetHeader("Bcc", to...)
-	m.SetHeader("Subject", subject)
-	m.SetBody("text/html", body)
-
-	return dial.DialAndSend(m)
-}
