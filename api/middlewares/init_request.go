@@ -6,24 +6,12 @@ import (
 	"context"
 	"github.com/nazariglez/tarentola-backend/api/controllers"
 	"github.com/nazariglez/tarentola-backend/utils"
-	"math/rand"
 	"net/http"
 )
 
-const characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPRSTUVWXYZ"
-
-func getRandomID() string {
-	id := make([]byte, 10)
-	for i, _ := range id {
-		id[i] = characters[rand.Intn(len(characters))]
-	}
-
-	return string(id)
-}
-
 func InitRequest(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "rid", getRandomID())
+		ctx := context.WithValue(r.Context(), "rid", utils.GetRandomID(10))
 
 		claims, err := controllers.ValidateToken(controllers.GetToken(r))
 		if err != nil {
