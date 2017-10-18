@@ -96,8 +96,37 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func ConfirmUser(w http.ResponseWriter, r *http.Request) {
-	//todo
+	token := strings.TrimSpace(r.Form.Get("token"))
+	ut, err := usertempmodel.FindByToken(token)
 
+	if helpers.IsNotFoundErr(err) {
+		SendBadRequest(w, r, "Invalid token.")
+		return
+	}
+
+	if err != nil {
+		SendServerError(w, r, err)
+		return
+	}
+
+	if ut.ID != 0 {
+		err := usermodel.UpdateFields(ut.UserID, map[string]interface{}{
+			"active": true,
+		})
+
+		if err != nil {
+			SendServerError(w, r, err)
+			return
+		}
+
+		if err := usertempmodel.DeleteByID(ut.ID); err != nil {
+			SendServerError(w, r, err)
+			return
+		}
+	}
+
+	SendOk(w, r)
+	return
 }
 
 func ResendConfirmEmail(w http.ResponseWriter, r *http.Request) {
